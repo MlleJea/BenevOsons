@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto;
 
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
 
 import java.time.LocalDate;
@@ -14,7 +15,7 @@ public class RegistrationDto {
     private String phoneNumber;
     private RoleName roleName;
     private String name;
-    private AdressDto adressDto;
+    private Adress adress;
 
     ////// Volunteer
     private String firstName;
@@ -28,7 +29,7 @@ public class RegistrationDto {
     ////// Volunteer
     public RegistrationDto(String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
                            String phoneNumber, RoleName roleName, String name, String firstName, LocalDate birthDate,
-                           AdressDto adressDto) {
+                           Adress adress) {
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
@@ -38,12 +39,12 @@ public class RegistrationDto {
         this.name = name;
         this.firstName = firstName;
         this.birthDate = birthDate;
-        this.adressDto = adressDto;
+        this.adress = adress;
     }
 
     ////// Organization
     public RegistrationDto(String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
-                           String phoneNumber, RoleName roleName, String name, AdressDto adressDto) {
+                           String phoneNumber, RoleName roleName, String name, Adress adress) {
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
@@ -51,7 +52,7 @@ public class RegistrationDto {
         this.phoneNumber = phoneNumber;
         this.roleName = roleName;
         this.name = name;
-        this.adressDto = adressDto;
+        this.adress = adress;
     }
 
     /// Getters
@@ -91,8 +92,8 @@ public class RegistrationDto {
         return birthDate;
     }
 
-    public AdressDto getAdressDto() {
-        return adressDto;
+    public Adress getAdress() {
+        return adress;
     }
 
     /// Setters
@@ -132,7 +133,7 @@ public class RegistrationDto {
         this.birthDate = birthDate;
     }
 
-    public void setAdressDto(AdressDto adressDto) {
-        this.adressDto = adressDto;
+    public void setAdress(Adress adress) {
+        this.adress = adress;
     }
 }

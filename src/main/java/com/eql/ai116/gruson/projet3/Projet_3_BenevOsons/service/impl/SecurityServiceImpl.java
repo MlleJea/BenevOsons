@@ -4,7 +4,6 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Volunteer;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.AdressDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.AuthenticationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.UserDto;
@@ -18,6 +17,9 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepositor
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolonteerRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.security.JwtUtilities;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SecurityService;
+import jakarta.transaction.Transactional;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,76 +39,81 @@ import java.util.List;
 @Service
 public class SecurityServiceImpl implements SecurityService {
 
+    Logger logger = LogManager.getLogger();
+
     /// Attributs
     private UserRepository userRepository;
     private RoleRepository roleRepository;
     private VolonteerRepository volonteerRepository;
     private OrganizationRepository organizationRepository;
-    private AdressRepository adressRepository;
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private JwtUtilities jwtUtilities;
 
-
+    @Transactional
     @Override
     public ResponseEntity<Object> register(RegistrationDto registrationDto) {
-        if (userRepository.existsByEmail(registrationDto.getEmail())) {
-            return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
+        logger.info("Début de l'inscription pour : " + registrationDto.getEmail());
+
+        try {
+            if (userRepository.existsByEmail(registrationDto.getEmail())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
+            }
+
+            // Traitement de l'adresse
+            Adress adress = registrationDto.getAdress();
+            List<Adress> adresses = new ArrayList<>();
+            adresses.add(adress);
+
+            // Récupération du rôle
+            Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
+            if (role == null) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rôle non valide");
+            }
+            List<Role> roles = new ArrayList<>();
+            roles.add(role);
+
+            // Création de l'utilisateur
+            if (registrationDto.getRoleName().equals(RoleName.VOLUNTEER)) {
+                Volunteer volunteer = new Volunteer();
+                volunteer.setEmail(registrationDto.getEmail());
+                volunteer.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+                volunteer.setPhoneNumber(registrationDto.getPhoneNumber());
+                volunteer.setName(registrationDto.getName());
+                volunteer.setUserAdressList(adresses);
+                volunteer.setRegistrationDate(LocalDate.now());
+                volunteer.setRole(roles);
+                volunteer.setFirstName(registrationDto.getFirstName());
+                volunteer.setBirthdate(registrationDto.getBirthDate());
+
+                logger.info("Enregistrement du bénévole : " + volunteer);
+                volonteerRepository.save(volunteer);
+            } else if (registrationDto.getRoleName().equals(RoleName.ORGANIZATION)) {
+                Organization organization = new Organization();
+                organization.setEmail(registrationDto.getEmail());
+                organization.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+                organization.setPhoneNumber(registrationDto.getPhoneNumber());
+                organization.setName(registrationDto.getName());
+                organization.setUserAdressList(adresses);
+                organization.setRegistrationDate(LocalDate.now());
+                organization.setRole(roles);
+
+                logger.info("Enregistrement de l'organisation : " + organization);
+                organizationRepository.save(organization);
+            }
+
+            String token = jwtUtilities.generateToken(registrationDto.getName(), Collections.singletonList(role.getRoleName()));
+            logger.info("Inscription réussie pour : " + registrationDto.getEmail());
+            return ResponseEntity.status(HttpStatus.OK).body(new BearerToken(token, "Bearer "));
+        } catch (Exception e) {
+            logger.error("Erreur lors de l'inscription : ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue.");
         }
-
-        // Registration in the User table
-        User user = new User();
-        user.setEmail(registrationDto.getEmail());
-        user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-        user.setPhoneNumber(registrationDto.getPhoneNumber());
-        user.setName(registrationDto.getName());
-
-        // RegistrationDate calcul
-        user.setRegistrationDate(LocalDate.now());
-
-        // Role treatment
-        List<Role> roles = new ArrayList<>();
-        Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
-
-        if (role == null) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rôle non valide");
-        }
-        roles.add(role);
-        user.setRole(Collections.singletonList(role));
-        User userSaved = userRepository.save(user);
-
-        // Registration in the Adress table
-        AdressDto adressDto = registrationDto.getAdressDto();
-        Adress adress = new Adress();
-        adress.setCity(adressDto.getCity());
-        adress.setPostalCode(adressDto.getPostalCode());
-        adress.setStreetType(adressDto.getStreetType());
-        adress.setStreetNumber(adressDto.getStreetNumber());
-        adress.setStreetName(adressDto.getStreetName());
-        adress.setLatitude(adressDto.getLatitude());
-        adress.setLongitude(adressDto.getLongitude());
-
-        adressRepository.save(adress);
-
-        // Registration in the Volonteer or Oganization table
-        if (registrationDto.getRoleName().equals(RoleName.VOLUNTEER)) {
-            Volunteer volunteer = new Volunteer();
-            volunteer.setFirstName(registrationDto.getFirstName());
-            volunteer.setUser_id(userSaved.getUser_id());
-            volonteerRepository.save(volunteer);
-
-        } else if (registrationDto.getRoleName().equals(RoleName.ORGANIZATION)) {
-            Organization organization = new Organization();
-            organization.setUser_id(userSaved.getUser_id());
-            organizationRepository.save(organization);
-        }
-        String token = jwtUtilities.generateToken(registrationDto.getName(), Collections.singletonList(role.getRoleName()));
-        return ResponseEntity.status(HttpStatus.OK).body(new BearerToken(token , "Bearer "));
     }
 
     @Override
     public ResponseEntity<Object> authenticate(AuthenticationDto authenticationDto) {
-        Authentication authentication= authenticationManager.authenticate(
+        Authentication authentication = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         authenticationDto.getEmail(),
                         authenticationDto.getPassword()
@@ -140,11 +147,6 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
-    }
-
-    @Autowired
-    public void setAdressRepository(AdressRepository adressRepository) {
-        this.adressRepository = adressRepository;
     }
 
     @Autowired

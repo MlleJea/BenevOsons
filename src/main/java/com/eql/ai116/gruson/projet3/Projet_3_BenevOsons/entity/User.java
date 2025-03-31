@@ -19,7 +19,9 @@ import jakarta.persistence.ManyToOne;
 import java.time.LocalDate;
 import java.util.List;
 
-/** A user of the application, either a volonteer or an organization */
+/**
+ * A user of the application, either a volonteer or an organization
+ */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
 public class User {
@@ -40,24 +42,23 @@ public class User {
     private String phoneNumber;
 
     // Link to other tables
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_address",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "adress_id")})
     private List<Adress> userAdressList;
+
     @ManyToMany
     @JoinTable(name = "user_notifications",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "notification_id")})
     private List<Notification> userNotificationList;
-    @ManyToMany(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "user_role",
-            joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "role_id")
-    )
-    private List<Role> role;
 
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinTable(name = "user_role",
+            joinColumns = {@JoinColumn(name = "user_id")},
+            inverseJoinColumns = {@JoinColumn(name = "role_id")})
+    private List<Role> role;
 
     /// Constructors
     public User() {
@@ -118,6 +119,7 @@ public class User {
     public List<Role> getRole() {
         return role;
     }
+
     /// Setters
     public void setUser_id(Long user_id) {
         this.user_id = user_id;
@@ -156,9 +158,8 @@ public class User {
     }
 
     public void setRole(List<Role> roles) {
-        this.role = role;
+        this.role = roles;
     }
-
-/// Méthodes
+    /// Méthodes
 
 }
