@@ -1,22 +1,8 @@
-package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
+package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto;
 
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-
-import java.util.List;
-
-@Entity
-public class Adress {
+public class AdressDto {
 
     /// Attributs
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long adress_id;
     private int streetNumber;
     private String streetName;
     private String streetType;
@@ -25,19 +11,11 @@ public class Adress {
     private Double latitude;
     private Double longitude;
 
-    @ManyToMany(mappedBy = "userAdressList",cascade = CascadeType.ALL)
-    private List<User> userList;
-
-    @OneToMany(mappedBy = "adress", cascade = CascadeType.ALL)
-    private List<Mission> adressMissionsList;
-
-    /// Constructeur
-    public Adress() {
+    /// Constructors
+    public AdressDto() {
     }
 
-    public Adress(Long adress_id, int streetNumber, String streetName, String streetType, String postalCode,
-                  String city, Double latitude, Double longitude, List<User> userList, List<Mission> adressMissionsList) {
-        this.adress_id = adress_id;
+    public AdressDto(int streetNumber, String streetName, String streetType, String postalCode, String city, Double latitude, Double longitude) {
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.streetType = streetType;
@@ -45,15 +23,9 @@ public class Adress {
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.userList = userList;
-        this.adressMissionsList = adressMissionsList;
     }
 
     /// Getters
-    public Long getAdress_id() {
-        return adress_id;
-    }
-
     public int getStreetNumber() {
         return streetNumber;
     }
@@ -82,19 +54,7 @@ public class Adress {
         return longitude;
     }
 
-    public List<User> getUserList() {
-        return userList;
-    }
-
-    public List<Mission> getAdressMissionsList() {
-        return adressMissionsList;
-    }
-
     /// Setters
-    public void setAdress_id(Long adress_id) {
-        this.adress_id = adress_id;
-    }
-
     public void setStreetNumber(int streetNumber) {
         this.streetNumber = streetNumber;
     }
@@ -121,13 +81,5 @@ public class Adress {
 
     public void setLongitude(Double longitude) {
         this.longitude = longitude;
-    }
-
-    public void setUserList(List<User> userList) {
-        this.userList = userList;
-    }
-
-    public void setAdressMissionsList(List<Mission> adressMissionsList) {
-        this.adressMissionsList = adressMissionsList;
     }
 }

@@ -37,9 +37,71 @@ public class News {
     public News() {
     }
 
-
+    public News(Long id_news, LocalDate addingDate, LocalDate withdrawalDate, String title, String description,
+                List<Notification> newsNotificationList, Organization organization) {
+        this.id_news = id_news;
+        this.addingDate = addingDate;
+        this.withdrawalDate = withdrawalDate;
+        this.title = title;
+        this.description = description;
+        this.newsNotificationList = newsNotificationList;
+        this.organization = organization;
+    }
     /// Getters
+    public Long getId_news() {
+        return id_news;
+    }
 
+    public LocalDate getAddingDate() {
+        return addingDate;
+    }
+
+    public LocalDate getWithdrawalDate() {
+        return withdrawalDate;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public List<Notification> getNewsNotificationList() {
+        return newsNotificationList;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+    
     /// Setters
+    public void setId_news(Long id_news) {
+        this.id_news = id_news;
+    }
 
+    public void setAddingDate(LocalDate addingDate) {
+        this.addingDate = addingDate;
+    }
+
+    public void setWithdrawalDate(LocalDate withdrawalDate) {
+        this.withdrawalDate = withdrawalDate;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setNewsNotificationList(List<Notification> newsNotificationList) {
+        this.newsNotificationList = newsNotificationList;
+    }
+
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
+    }
 }

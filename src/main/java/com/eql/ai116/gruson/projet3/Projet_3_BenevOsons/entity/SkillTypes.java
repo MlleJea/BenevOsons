@@ -36,13 +36,15 @@ public class SkillTypes {
     public SkillTypes() {
     }
 
-    public SkillTypes(String label, Long id_SkillType) {
-        this.label = label;
+    public SkillTypes(Long id_SkillType, String label, List<Mission> skillTypeMissionList, List<Skill> skillList) {
         this.id_SkillType = id_SkillType;
+        this.label = label;
+        this.skillTypeMissionList = skillTypeMissionList;
+        this.skillList = skillList;
     }
 
     /// Getters
-    public Long getIdSkillType() {
+    public Long getId_SkillType() {
         return id_SkillType;
     }
 
@@ -50,12 +52,28 @@ public class SkillTypes {
         return label;
     }
 
+    public List<Mission> getSkillTypeMissionList() {
+        return skillTypeMissionList;
+    }
+
+    public List<Skill> getSkillList() {
+        return skillList;
+    }
+
     /// Setters
+    public void setId_SkillType(Long id_SkillType) {
+        this.id_SkillType = id_SkillType;
+    }
+
     public void setLabel(String label) {
         this.label = label;
     }
 
-    public void setIdSkillType(Long id_SkillType) {
-        this.id_SkillType = id_SkillType;
+    public void setSkillTypeMissionList(List<Mission> skillTypeMissionList) {
+        this.skillTypeMissionList = skillTypeMissionList;
+    }
+
+    public void setSkillList(List<Skill> skillList) {
+        this.skillList = skillList;
     }
 }

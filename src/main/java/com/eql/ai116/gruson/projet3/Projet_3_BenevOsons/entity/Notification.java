@@ -36,10 +36,53 @@ public class Notification {
     public Notification() {
     }
 
+    public Notification(Long notification_id, String label, List<User> notificationsUserList,
+                        List<News> notificationsNewsList, List<Mission> notificationMissionList) {
+        this.notification_id = notification_id;
+        this.label = label;
+        this.notificationsUserList = notificationsUserList;
+        this.notificationsNewsList = notificationsNewsList;
+        this.notificationMissionList = notificationMissionList;
+    }
 
     /// Getters
+    public Long getNotification_id() {
+        return notification_id;
+    }
 
+    public String getLabel() {
+        return label;
+    }
 
+    public List<User> getNotificationsUserList() {
+        return notificationsUserList;
+    }
+
+    public List<News> getNotificationsNewsList() {
+        return notificationsNewsList;
+    }
+
+    public List<Mission> getNotificationMissionList() {
+        return notificationMissionList;
+    }
     /// Setters
+    public void setNotification_id(Long notification_id) {
+        this.notification_id = notification_id;
+    }
 
+    public void setLabel(String label) {
+        this.label = label;
+    }
+
+    public void setNotificationsUserList(List<User> notificationsUserList) {
+        this.notificationsUserList = notificationsUserList;
+    }
+
+    public void setNotificationsNewsList(List<News> notificationsNewsList) {
+        this.notificationsNewsList = notificationsNewsList;
+    }
+
+    public void setNotificationMissionList(List<Mission> notificationMissionList) {
+        this.notificationMissionList = notificationMissionList;
+    }
 }

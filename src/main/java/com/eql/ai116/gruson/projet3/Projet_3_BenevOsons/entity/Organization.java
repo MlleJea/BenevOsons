@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -14,11 +15,10 @@ import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-public class Organization extends User{
+public class Organization extends User {
 
     /// Attributs
-    private String organization_name;
-
+    ///
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
     private List<News> organizationNewsList;
 
@@ -33,12 +33,33 @@ public class Organization extends User{
     public Organization() {
     }
 
-    /// Getters
-    public String getOrganization_name() {
-        return organization_name;
+    public Organization(Long user_id, String email, String password, LocalDate registrationDate,
+                        LocalDate unRegistrationDate, String name, String phoneNumber, List<Adress> userAdressList,
+                        List<Notification> userNotificationList, List<Role> role, List<News> organizationNewsList,
+                        List<Mission> organizationMissionList) {
+        super(user_id, email, password, registrationDate, unRegistrationDate, name, phoneNumber, userAdressList,
+                userNotificationList, role);
+        this.organizationNewsList = organizationNewsList;
+        this.organizationMissionList = organizationMissionList;
     }
+
+    /// Getters
+
+    public List<News> getOrganizationNewsList() {
+        return organizationNewsList;
+    }
+
+    public List<Mission> getOrganizationMissionList() {
+        return organizationMissionList;
+    }
+
     /// Setters
-    public void setOrganization_name(String organization_name) {
-        this.organization_name = organization_name;
+
+    public void setOrganizationNewsList(List<News> organizationNewsList) {
+        this.organizationNewsList = organizationNewsList;
+    }
+
+    public void setOrganizationMissionList(List<Mission> organizationMissionList) {
+        this.organizationMissionList = organizationMissionList;
     }
 }
