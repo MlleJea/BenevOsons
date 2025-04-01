@@ -5,12 +5,14 @@ public class UserDto {
     private final Long id;
     private final String name;
     private final String token;
+    private final String role;
 
     /// Constructor
-    public UserDto(Long id, String name, String token) {
+    public UserDto(Long id, String name, String token, String role) {
         this.id = id;
         this.name = name;
         this.token = token;
+        this.role = role;
     }
 
     /// Getters
@@ -24,5 +26,9 @@ public class UserDto {
 
     public String getToken() {
         return token;
+    }
+
+    public String getRole() {
+        return role;
     }
 }

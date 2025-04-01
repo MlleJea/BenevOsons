@@ -7,10 +7,8 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Volunteer;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.AuthenticationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.UserDto;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.BearerToken;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AdressRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.RoleRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
@@ -60,12 +58,10 @@ public class SecurityServiceImpl implements SecurityService {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
             }
 
-            // Traitement de l'adresse
             Adress adress = registrationDto.getAdress();
             List<Adress> adresses = new ArrayList<>();
             adresses.add(adress);
 
-            // Récupération du rôle
             Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
             if (role == null) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rôle non valide");
@@ -73,7 +69,6 @@ public class SecurityServiceImpl implements SecurityService {
             List<Role> roles = new ArrayList<>();
             roles.add(role);
 
-            // Création de l'utilisateur
             if (registrationDto.getRoleName().equals(RoleName.VOLUNTEER)) {
                 Volunteer volunteer = new Volunteer();
                 volunteer.setEmail(registrationDto.getEmail());
@@ -104,7 +99,12 @@ public class SecurityServiceImpl implements SecurityService {
 
             String token = jwtUtilities.generateToken(registrationDto.getName(), Collections.singletonList(role.getRoleName()));
             logger.info("Inscription réussie pour : " + registrationDto.getEmail());
-            return ResponseEntity.status(HttpStatus.OK).body(new BearerToken(token, "Bearer "));
+
+            User user = userRepository.findByEmail(registrationDto.getEmail());
+            UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token, role.getRoleName());
+
+            return ResponseEntity.status(HttpStatus.OK).body(userDto);
+
         } catch (Exception e) {
             logger.error("Erreur lors de l'inscription : ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue.");
@@ -113,24 +113,35 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Override
     public ResponseEntity<Object> authenticate(AuthenticationDto authenticationDto) {
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        authenticationDto.getEmail(),
-                        authenticationDto.getPassword()
-                )
-        );
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        User user = userRepository.findByEmail(authentication.getName());
+        logger.info("Début de l'authentification pour : " + authenticationDto.getEmail());
 
-        List<String> rolesNames = new ArrayList<>();
-        for (Role role : user.getRole()) {
-            rolesNames.add(role.getRoleName().toString());
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            authenticationDto.getEmail(),
+                            authenticationDto.getPassword()
+                    )
+            );
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            User user = userRepository.findByEmail(authentication.getName());
+
+            List<String> rolesNames = new ArrayList<>();
+            for (Role role : user.getRole()) {
+                rolesNames.add(role.getRoleName());
+            }
+
+            String token = jwtUtilities.generateToken(user.getName(), rolesNames);
+
+            UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token, user.getRole().toString());
+
+            logger.info("Authentification réussie pour " + authenticationDto.getEmail());
+            return ResponseEntity.ok(userDto);
+
+        } catch (Exception e){
+
+            logger.error("Erreur d'authentification : ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'authentification. Veuillez réessayer.");
         }
-
-        String token = jwtUtilities.generateToken(user.getName(), rolesNames);
-
-        UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token);
-        return ResponseEntity.ok(userDto);
     }
 
     /// Setters

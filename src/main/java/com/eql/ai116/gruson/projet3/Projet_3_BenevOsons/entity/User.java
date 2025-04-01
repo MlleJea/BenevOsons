@@ -65,6 +65,18 @@ public class User {
     public User() {
     }
 
+    public User(Long user_id, String email, String password, LocalDate registrationDate, String name, List<Role> role,
+                List<Adress> userAdressList, String phoneNumber) {
+        this.user_id = user_id;
+        this.email = email;
+        this.password = password;
+        this.registrationDate = registrationDate;
+        this.name = name;
+        this.role = role;
+        this.userAdressList = userAdressList;
+        this.phoneNumber = phoneNumber;
+    }
+
     public User(Long user_id, String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
                 String name, String phoneNumber, List<Adress> userAdressList, List<Notification> userNotificationList,
                 List<Role> role) {
