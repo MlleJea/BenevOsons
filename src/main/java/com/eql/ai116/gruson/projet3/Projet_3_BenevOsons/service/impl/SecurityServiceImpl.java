@@ -15,6 +15,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.RoleRepositor
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolonteerRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.security.JwtUtilities;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AdressService;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SecurityService;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -44,7 +45,7 @@ public class SecurityServiceImpl implements SecurityService {
     private RoleRepository roleRepository;
     private VolonteerRepository volonteerRepository;
     private OrganizationRepository organizationRepository;
-    private AdressServiceImpl adressServiceImpl;
+    private AdressService adressService;
     private AdressRepository adressRepository;
 
     private PasswordEncoder passwordEncoder;
@@ -64,7 +65,7 @@ public class SecurityServiceImpl implements SecurityService {
             List<Adress> adresses = registrationDto.getAdressList();
 
             for (Adress adress : adresses){
-                Adress adressWithLatLon = adressServiceImpl.adressWithLatLon(adress);
+                Adress adressWithLatLon = adressService.adressWithLatLon(adress);
                 Optional<Adress> adressIsAlreadyExisting = adressRepository.findByLatitudeAndLongitude(
                         adressWithLatLon.getLatitude(),adressWithLatLon.getLongitude());
                 if( adressIsAlreadyExisting.isEmpty()){
@@ -193,7 +194,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Autowired
-    public void setAdressService(AdressServiceImpl adressServiceImpl) {
-        this.adressServiceImpl = adressServiceImpl;
+    public void setAdressService(AdressService adressService) {
+        this.adressService = adressService;
     }
 }
