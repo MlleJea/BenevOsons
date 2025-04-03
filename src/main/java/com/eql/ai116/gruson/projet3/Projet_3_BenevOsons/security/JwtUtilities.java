@@ -67,10 +67,10 @@ public class JwtUtilities {
         return extractExpiration(token).before(new Date());
     }
 
-    public String generateToken(String email, List<String> roles) {
+    public String generateToken(String email, String role) {
         return Jwts.builder()
                 .setSubject(email)
-                .claim("role", roles)
+                .claim("role", role)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(Date.from(Instant.now().plus(jwtExpiration, ChronoUnit.MILLIS)))
                 .signWith(SignatureAlgorithm.HS256, secret).compact();

@@ -8,6 +8,6 @@ import org.springframework.http.ResponseEntity;
 public interface SecurityService {
    ResponseEntity<Object> register(RegistrationDto registrationDto);
 
-    ResponseEntity<Object> authenticate(AuthenticationDto authenticationDto);
+   ResponseEntity<Object> authenticate(AuthenticationDto authenticationDto);
 
 }

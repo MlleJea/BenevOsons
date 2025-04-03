@@ -4,6 +4,7 @@ import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -20,12 +21,12 @@ public class Skill {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id_Skill;
-    private Long labelSkill;
+    private String labelSkill;
 
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
     @JoinColumn(referencedColumnName = "id_SkillType")
     private SkillTypes skillType;
 
@@ -36,7 +37,7 @@ public class Skill {
     public Skill() {
     }
 
-    public Skill(List<Volunteer> skillsVolunteerList, SkillTypes skillType, Grade grade, Long labelSkill, Long id_Skill) {
+    public Skill(List<Volunteer> skillsVolunteerList, SkillTypes skillType, Grade grade, String labelSkill, Long id_Skill) {
         this.skillsVolunteerList = skillsVolunteerList;
         this.skillType = skillType;
         this.grade = grade;
@@ -49,7 +50,7 @@ public class Skill {
         return id_Skill;
     }
 
-    public Long getLabelSkill() {
+    public String getLabelSkill() {
         return labelSkill;
     }
 
@@ -70,7 +71,7 @@ public class Skill {
         this.id_Skill = id_Skill;
     }
 
-    public void setLabelSkill(Long labelSkill) {
+    public void setLabelSkill(String labelSkill) {
         this.labelSkill = labelSkill;
     }
 

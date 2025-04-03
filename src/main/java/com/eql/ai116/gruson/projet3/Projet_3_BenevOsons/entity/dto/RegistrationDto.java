@@ -4,36 +4,35 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public class RegistrationDto {
 
     /// Attributs
     private String email;
     private String password;
-    private LocalDate registrationDate;
-    private LocalDate unRegistrationDate;
     private String phoneNumber;
     private RoleName roleName;
     private String name;
-    private Adress adress;
+    private List<Adress> adress;
 
     ////// Volunteer
     private String firstName;
     private LocalDate birthDate;
 
     ////// Organization
+    private Long rna;
 
     /// Constructors
     public RegistrationDto() {
     }
     ////// Volunteer
-    public RegistrationDto(String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
+    // Add
+    public RegistrationDto(String email, String password,
                            String phoneNumber, RoleName roleName, String name, String firstName, LocalDate birthDate,
-                           Adress adress) {
+                           List<Adress> adress) {
         this.email = email;
         this.password = password;
-        this.registrationDate = registrationDate;
-        this.unRegistrationDate = unRegistrationDate;
         this.phoneNumber = phoneNumber;
         this.roleName = roleName;
         this.name = name;
@@ -41,35 +40,48 @@ public class RegistrationDto {
         this.birthDate = birthDate;
         this.adress = adress;
     }
+    // Update
+
+    public RegistrationDto(String password, String phoneNumber, String name,List<Adress> adress, String firstName) {
+
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.adress = adress;
+        this.firstName = firstName;
+    }
 
     ////// Organization
-    public RegistrationDto(String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
-                           String phoneNumber, RoleName roleName, String name, Adress adress) {
+    // Add
+    public RegistrationDto(String email, String password,
+                           String phoneNumber, RoleName roleName, String name, List<Adress> adress, Long rna) {
         this.email = email;
         this.password = password;
-        this.registrationDate = registrationDate;
-        this.unRegistrationDate = unRegistrationDate;
         this.phoneNumber = phoneNumber;
         this.roleName = roleName;
         this.name = name;
         this.adress = adress;
+        this.rna = rna;
+    }
+
+    // Update
+
+    public RegistrationDto( String password, String phoneNumber, String name, List<Adress> adress,Long rna) {
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.name = name;
+        this.adress = adress;
+        this.rna = rna;
     }
 
     /// Getters
+
     public String getEmail() {
         return email;
     }
 
     public String getPassword() {
         return password;
-    }
-
-    public LocalDate getRegistrationDate() {
-        return registrationDate;
-    }
-
-    public LocalDate getUnRegistrationDate() {
-        return unRegistrationDate;
     }
 
     public String getPhoneNumber() {
@@ -92,11 +104,16 @@ public class RegistrationDto {
         return birthDate;
     }
 
-    public Adress getAdress() {
+    public List<Adress> getAdress() {
         return adress;
     }
 
+    public Long getRna() {
+        return rna;
+    }
+
     /// Setters
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -105,15 +122,7 @@ public class RegistrationDto {
         this.password = password;
     }
 
-    public void setRegistrationDate(LocalDate registrationDate) {
-        this.registrationDate = registrationDate;
-    }
-
-    public void setUnRegistrationDate(LocalDate unRegistrationDate) {
-        this.unRegistrationDate = unRegistrationDate;
-    }
-
-    public void setPhoneNumber(String phoneNumber) {
+        public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -133,7 +142,11 @@ public class RegistrationDto {
         this.birthDate = birthDate;
     }
 
-    public void setAdress(Adress adress) {
+    public void setAdress(List<Adress> adress) {
         this.adress = adress;
+    }
+
+    public void setRna(Long rna) {
+        this.rna = rna;
     }
 }

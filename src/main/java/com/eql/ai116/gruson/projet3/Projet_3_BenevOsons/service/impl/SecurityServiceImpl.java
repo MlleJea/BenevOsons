@@ -58,16 +58,9 @@ public class SecurityServiceImpl implements SecurityService {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
             }
 
-            Adress adress = registrationDto.getAdress();
-            List<Adress> adresses = new ArrayList<>();
-            adresses.add(adress);
+            List<Adress> adresses = registrationDto.getAdress();
 
             Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
-            if (role == null) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Rôle non valide");
-            }
-            List<Role> roles = new ArrayList<>();
-            roles.add(role);
 
             if (registrationDto.getRoleName().equals(RoleName.VOLUNTEER)) {
                 Volunteer volunteer = new Volunteer();
@@ -77,7 +70,7 @@ public class SecurityServiceImpl implements SecurityService {
                 volunteer.setName(registrationDto.getName());
                 volunteer.setUserAdressList(adresses);
                 volunteer.setRegistrationDate(LocalDate.now());
-                volunteer.setRole(roles);
+                volunteer.setRole(role);
                 volunteer.setFirstName(registrationDto.getFirstName());
                 volunteer.setBirthdate(registrationDto.getBirthDate());
 
@@ -91,13 +84,14 @@ public class SecurityServiceImpl implements SecurityService {
                 organization.setName(registrationDto.getName());
                 organization.setUserAdressList(adresses);
                 organization.setRegistrationDate(LocalDate.now());
-                organization.setRole(roles);
+                organization.setRole(role);
+                organization.setrna(registrationDto.getRna());
 
                 logger.info("Enregistrement de l'organisation : " + organization);
                 organizationRepository.save(organization);
             }
 
-            String token = jwtUtilities.generateToken(registrationDto.getName(), Collections.singletonList(role.getRoleName()));
+            String token = jwtUtilities.generateToken(registrationDto.getName(), role.getRoleName());
             logger.info("Inscription réussie pour : " + registrationDto.getEmail());
 
             User user = userRepository.findByEmail(registrationDto.getEmail());
@@ -125,14 +119,14 @@ public class SecurityServiceImpl implements SecurityService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByEmail(authentication.getName());
 
-            List<String> rolesNames = new ArrayList<>();
-            for (Role role : user.getRole()) {
-                rolesNames.add(role.getRoleName());
-            }
+            logger.info(user);
 
-            String token = jwtUtilities.generateToken(user.getName(), rolesNames);
+            Role role =user.getRole();
+            String roleName = role.getRoleName();
 
-            UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token, user.getRole().toString());
+            String token = jwtUtilities.generateToken(user.getName(),roleName);
+
+            UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token, roleName);
 
             logger.info("Authentification réussie pour " + authenticationDto.getEmail());
             return ResponseEntity.ok(userDto);

@@ -1,6 +1,7 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Entity;
 
 import jakarta.persistence.JoinColumn;
@@ -18,11 +19,14 @@ public class Volunteer extends User{
     private LocalDate birthdate;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "volunteer_skills",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "id_Skill")})
     private List<Skill> volunteerSkillsList;
+
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "volunteer_missions",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "mission_id")})

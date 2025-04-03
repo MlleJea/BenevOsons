@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -26,9 +27,11 @@ public class Adress {
     private Double longitude;
 
     @ManyToMany(mappedBy = "userAdressList",cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<User> userList;
 
     @OneToMany(mappedBy = "adress", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Mission> adressMissionsList;
 
     /// Constructeur
@@ -129,5 +132,20 @@ public class Adress {
 
     public void setAdressMissionsList(List<Mission> adressMissionsList) {
         this.adressMissionsList = adressMissionsList;
+    }
+
+    /// To string
+    @Override
+    public String toString() {
+        return "Adress{" +
+                "adress_id=" + adress_id +
+                ", streetNumber=" + streetNumber +
+                ", streetName='" + streetName + '\'' +
+                ", streetType='" + streetType + '\'' +
+                ", postalCode='" + postalCode + '\'' +
+                ", city='" + city + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                '}';
     }
 }

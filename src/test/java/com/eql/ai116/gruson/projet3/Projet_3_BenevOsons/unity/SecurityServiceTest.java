@@ -74,7 +74,7 @@ class SecurityServiceImplTest {
         user = new User(1L, "TestUser", "encodedPassword", LocalDate.now(), "Test", List.of(role), new ArrayList<>(), "0606060606");
     }
 
-    @Test
+     @Test
     void shouldRegisterVolunteerSuccessfully() {
         mockCommonRegisterDependencies();
 

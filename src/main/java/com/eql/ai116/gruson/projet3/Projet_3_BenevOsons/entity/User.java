@@ -15,6 +15,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDate;
@@ -30,42 +31,36 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long user_id;
-
-    // Ignored information for more security
-    @JsonIgnore
     private String email;
-    @JsonIgnore
     private String password;
-
     private LocalDate registrationDate;
     private LocalDate unRegistrationDate;
     private String name;
     private String phoneNumber;
 
     // Link to other tables
-    @ManyToMany(cascade = CascadeType.PERSIST)
+    @ManyToMany( cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_address",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "adress_id")})
     private List<Adress> userAdressList;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "user_notifications",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "notification_id")})
     private List<Notification> userNotificationList;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
-    @JoinTable(name = "user_role",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "role_id")})
-    private List<Role> role;
+    @ManyToOne(fetch = FetchType.EAGER, cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JoinColumn(name = "role_id")
+    private Role role;
 
     /// Constructors
     public User() {
     }
 
-    public User(Long user_id, String email, String password, LocalDate registrationDate, String name, List<Role> role,
+    public User(Long user_id, String email, String password, LocalDate registrationDate, String name, Role role,
                 List<Adress> userAdressList, String phoneNumber) {
         this.user_id = user_id;
         this.email = email;
@@ -79,7 +74,7 @@ public class User {
 
     public User(Long user_id, String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
                 String name, String phoneNumber, List<Adress> userAdressList, List<Notification> userNotificationList,
-                List<Role> role) {
+                Role role) {
         this.user_id = user_id;
         this.email = email;
         this.password = password;
@@ -129,7 +124,7 @@ public class User {
         return userNotificationList;
     }
 
-    public List<Role> getRole() {
+    public Role getRole() {
         return role;
     }
 
@@ -170,9 +165,10 @@ public class User {
         this.userNotificationList = userNotificationList;
     }
 
-    public void setRole(List<Role> roles) {
+    public void setRole(Role roles) {
         this.role = roles;
     }
     /// Méthodes
+
 
 }

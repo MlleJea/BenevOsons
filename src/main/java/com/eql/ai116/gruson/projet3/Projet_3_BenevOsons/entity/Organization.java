@@ -1,6 +1,7 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -18,11 +19,15 @@ import java.util.List;
 public class Organization extends User {
 
     /// Attributs
-    ///
+
+    private Long rna;
+
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<News> organizationNewsList;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "organization_missions",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "mission_id")})
@@ -33,17 +38,11 @@ public class Organization extends User {
     public Organization() {
     }
 
-    public Organization(Long user_id, String email, String password, LocalDate registrationDate,
-                        LocalDate unRegistrationDate, String name, String phoneNumber, List<Adress> userAdressList,
-                        List<Notification> userNotificationList, List<Role> role, List<News> organizationNewsList,
-                        List<Mission> organizationMissionList) {
-        super(user_id, email, password, registrationDate, unRegistrationDate, name, phoneNumber, userAdressList,
-                userNotificationList, role);
-        this.organizationNewsList = organizationNewsList;
-        this.organizationMissionList = organizationMissionList;
-    }
-
     /// Getters
+
+    public Long getrna() {
+        return rna;
+    }
 
     public List<News> getOrganizationNewsList() {
         return organizationNewsList;
@@ -55,6 +54,10 @@ public class Organization extends User {
 
     /// Setters
 
+    public void setrna(Long rna) {
+        this.rna = rna;
+    }
+    
     public void setOrganizationNewsList(List<News> organizationNewsList) {
         this.organizationNewsList = organizationNewsList;
     }
