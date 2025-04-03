@@ -20,7 +20,6 @@ public class Adress {
     private Long adress_id;
     private int streetNumber;
     private String streetName;
-    private String streetType;
     private String postalCode;
     private String city;
     private Double latitude;
@@ -34,16 +33,17 @@ public class Adress {
     @JsonIgnore
     private List<Mission> adressMissionsList;
 
+
+
     /// Constructeur
     public Adress() {
     }
 
-    public Adress(Long adress_id, int streetNumber, String streetName, String streetType, String postalCode,
+    public Adress(Long adress_id, int streetNumber, String streetName, String postalCode,
                   String city, Double latitude, Double longitude, List<User> userList, List<Mission> adressMissionsList) {
         this.adress_id = adress_id;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
-        this.streetType = streetType;
         this.postalCode = postalCode;
         this.city = city;
         this.latitude = latitude;
@@ -63,10 +63,6 @@ public class Adress {
 
     public String getStreetName() {
         return streetName;
-    }
-
-    public String getStreetType() {
-        return streetType;
     }
 
     public String getPostalCode() {
@@ -106,10 +102,6 @@ public class Adress {
         this.streetName = streetName;
     }
 
-    public void setStreetType(String streetType) {
-        this.streetType = streetType;
-    }
-
     public void setPostalCode(String postalCode) {
         this.postalCode = postalCode;
     }
@@ -141,11 +133,11 @@ public class Adress {
                 "adress_id=" + adress_id +
                 ", streetNumber=" + streetNumber +
                 ", streetName='" + streetName + '\'' +
-                ", streetType='" + streetType + '\'' +
                 ", postalCode='" + postalCode + '\'' +
                 ", city='" + city + '\'' +
                 ", latitude=" + latitude +
                 ", longitude=" + longitude +
                 '}';
     }
+
 }

@@ -1,6 +1,7 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.SkillDto;
@@ -49,6 +50,11 @@ public class SpaceRestController {
     @GetMapping("/displaySkill/{id}")
     public List<Skill> displaySkill(@PathVariable Long id){
         return spaceService.displaySkill(id);
+    }
+
+    @GetMapping("/displaySkillTypes")
+    public List<SkillTypes> displaySkillTypes(){
+        return spaceService.displaySkillTypes();
     }
 
     @PostMapping("/addSkill")

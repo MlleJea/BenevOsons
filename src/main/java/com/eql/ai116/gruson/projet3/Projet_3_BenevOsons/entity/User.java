@@ -39,7 +39,7 @@ public class User {
     private String phoneNumber;
 
     // Link to other tables
-    @ManyToMany( cascade = CascadeType.PERSIST)
+    @ManyToMany( cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     @JoinTable(name = "user_address",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "adress_id")})

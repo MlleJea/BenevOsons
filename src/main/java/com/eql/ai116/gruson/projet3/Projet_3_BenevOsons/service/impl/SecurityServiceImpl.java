@@ -9,6 +9,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationD
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.UserDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AdressRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.RoleRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
@@ -29,9 +30,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -44,6 +44,9 @@ public class SecurityServiceImpl implements SecurityService {
     private RoleRepository roleRepository;
     private VolonteerRepository volonteerRepository;
     private OrganizationRepository organizationRepository;
+    private AdressServiceImpl adressServiceImpl;
+    private AdressRepository adressRepository;
+
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
     private JwtUtilities jwtUtilities;
@@ -58,7 +61,17 @@ public class SecurityServiceImpl implements SecurityService {
                 return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
             }
 
-            List<Adress> adresses = registrationDto.getAdress();
+            List<Adress> adresses = registrationDto.getAdressList();
+
+            for (Adress adress : adresses){
+                Adress adressWithLatLon = adressServiceImpl.adressWithLatLon(adress);
+                Optional<Adress> adressIsAlreadyExisting = adressRepository.findByLatitudeAndLongitude(
+                        adressWithLatLon.getLatitude(),adressWithLatLon.getLongitude());
+                if( adressIsAlreadyExisting.isEmpty()){
+                    adressRepository.save(adressWithLatLon);
+                } else adress.setAdress_id(adressIsAlreadyExisting.get().getAdress_id());
+            }
+
 
             Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
 
@@ -172,5 +185,15 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     public void setJwtUtilities(JwtUtilities jwtUtilities) {
         this.jwtUtilities = jwtUtilities;
+    }
+
+    @Autowired
+    public void setAdressRepository(AdressRepository adressRepository) {
+        this.adressRepository = adressRepository;
+    }
+
+    @Autowired
+    public void setAdressService(AdressServiceImpl adressServiceImpl) {
+        this.adressServiceImpl = adressServiceImpl;
     }
 }

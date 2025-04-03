@@ -3,12 +3,16 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Volunteer;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.SkillDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SkillRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SkillTypesRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolonteerRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SpaceService;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -28,25 +32,28 @@ public class SpaceServiceImpl implements SpaceService {
     Logger logger = LogManager.getLogger();
 
     /// Attributs
-    private UserRepository userRepository;
     private PasswordEncoder passwordEncoder;
+    private UserRepository userRepository;
+    private VolonteerRepository volonteerRepository;
+    private SkillTypesRepository skillTypesRepository;
+    private SkillRepository skillRepository;
 
 
     /// User
     @Transactional
     @Override
     public User displayUser(Long id) {
-            Optional<User> user = userRepository.findById(id);
+        Optional<User> user = userRepository.findById(id);
 
         if (user.isPresent()) {
             User userToDisplay = user.get();
-
             List<Adress> addresses = userRepository.findUserAdressesByUserId(id);
             userToDisplay.setUserAdressList(addresses);
+
             return userToDisplay;
         }
         throw new RuntimeException("Utilisateur non trouvé avec l'ID : " + id);
-        }
+    }
 
     @Transactional
     @Override
@@ -74,8 +81,8 @@ public class SpaceServiceImpl implements SpaceService {
                 user.setPhoneNumber(registrationDto.getPhoneNumber());
             }
 
-            if (registrationDto.getAdress() != null && !registrationDto.getAdress().isEmpty()) {
-                user.setUserAdressList(registrationDto.getAdress());
+            if (registrationDto.getAdressList()!= null && !registrationDto.getAdressList().isEmpty()) {
+                user.setUserAdressList(registrationDto.getAdressList());
             }
 
             // Volunteer
@@ -91,7 +98,6 @@ public class SpaceServiceImpl implements SpaceService {
 
             // Organization
             if (user instanceof Organization && registrationDto.getRoleName() == RoleName.ORGANIZATION) {
-                // Si on veut ajouter des champs spécifiques à Organization, c'est ici.
             }
             userRepository.save(user);
 
@@ -102,20 +108,43 @@ public class SpaceServiceImpl implements SpaceService {
             logger.error("Erreur lors de la mise à jour de l'utilisateur avec l'ID : " + id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue lors de la mise à jour.");
         }
-}
+    }
 
 
     /// Skills
     @Override
     public List<Skill> displaySkill(Long id) {
-        return List.of();
+        return volonteerRepository.findUserSkillsByUserId(id);
     }
 
     @Override
-    public Skill addNewSkill(SkillDto skillDto) {
-        return null;
+    public List<SkillTypes> displaySkillTypes() {
+        return skillTypesRepository.findAll();
     }
 
+    @Transactional
+    @Override
+    public Skill addNewSkill(SkillDto skillDto) {
+        Skill skill = new Skill();
+        skill.setLabelSkill(skillDto.getLabelSkill());
+        skill.setGrade(skillDto.getGrade());
+
+        String skillLabel = skillDto.getSkillTypeLabel();
+
+        SkillTypes skillTypes;
+        if (skillTypesRepository.existsByLabel(skillLabel)) {
+            skillTypes = skillTypesRepository.findByLabel(skillLabel);
+        } else {
+            skillTypes = new SkillTypes();
+            skillTypes.setLabel(skillLabel);
+            skillTypes = skillTypesRepository.save(skillTypes);
+        }
+        skill.setSkillType(skillTypes);
+
+        return skillRepository.save(skill);
+    }
+
+    @Transactional
     @Override
     public Skill updateSkill(SkillDto skillDto) {
         return null;
@@ -136,5 +165,20 @@ public class SpaceServiceImpl implements SpaceService {
     @Autowired
     public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
         this.passwordEncoder = passwordEncoder;
+    }
+
+    @Autowired
+    public void setVolonteerRepository(VolonteerRepository volonteerRepository) {
+        this.volonteerRepository = volonteerRepository;
+    }
+
+    @Autowired
+    public void setSkillTypesRepository(SkillTypesRepository skillTypesRepository) {
+        this.skillTypesRepository = skillTypesRepository;
+    }
+
+    @Autowired
+    public void setSkillRepository(SkillRepository skillRepository) {
+        this.skillRepository = skillRepository;
     }
 }
