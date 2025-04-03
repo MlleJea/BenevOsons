@@ -23,6 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -140,7 +141,14 @@ public class SpaceServiceImpl implements SpaceService {
             skillTypes = skillTypesRepository.save(skillTypes);
         }
         skill.setSkillType(skillTypes);
+        Optional<Volunteer> volunteer = volonteerRepository.findById(skillDto.getVolunteerId());
 
+        if(!volunteer.isEmpty()) {
+            skill.setSkillsVolunteerList(Collections.singletonList(volunteer.get()));
+            List<Skill> skills = volunteer.get().getVolunteerSkillsList();
+            skills.add(skill);
+            volunteer.get().setVolunteerSkillsList(skills);
+        }
         return skillRepository.save(skill);
     }
 

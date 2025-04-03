@@ -1,5 +1,7 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 public enum Grade {
     ONE("1"),
     TWO("2"),
@@ -15,6 +17,7 @@ public enum Grade {
     }
 
     /// Getter
+    @JsonValue
     public String getNumber() {
         return number;
     }

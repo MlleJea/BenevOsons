@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +23,7 @@ public class SkillTypes {
     private String label;
 
     @ManyToMany
+    @JsonIgnore
     @JoinTable(name = "skillType_missions",
             joinColumns = {@JoinColumn(name = "id_SkillType")},
             inverseJoinColumns = {@JoinColumn(name = "mission_id")})
@@ -29,6 +31,7 @@ public class SkillTypes {
 
 
     @OneToMany(mappedBy = "skillType", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Skill> skillList;
 
 

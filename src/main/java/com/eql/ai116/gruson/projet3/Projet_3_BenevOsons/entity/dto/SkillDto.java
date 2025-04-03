@@ -7,7 +7,7 @@ public class SkillDto {
     /// Attributs
     private String labelSkill;
     private Grade grade;
-    private Long skillTypeId;
+    private String skillTypeLabel;
     private Long volunteerId;
 
     /// Constructor
@@ -23,8 +23,8 @@ public class SkillDto {
         return grade;
     }
 
-    public Long getSkillTypeId() {
-        return skillTypeId;
+    public String getSkillTypeLabel() {
+        return skillTypeLabel;
     }
 
     public Long getVolunteerId() {
@@ -39,8 +39,8 @@ public class SkillDto {
         this.grade = grade;
     }
 
-    public void setSkillTypeId(Long skillTypeId) {
-        this.skillTypeId = skillTypeId;
+    public void setSkillTypeLabel(String skillTypeLabel) {
+        this.skillTypeLabel = skillTypeLabel;
     }
 
     public void setVolunteerId(Long volunteerId) {

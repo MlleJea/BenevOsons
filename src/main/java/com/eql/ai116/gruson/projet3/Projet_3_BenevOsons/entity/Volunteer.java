@@ -2,6 +2,7 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 
 import jakarta.persistence.JoinColumn;

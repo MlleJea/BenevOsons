@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -30,7 +31,8 @@ public class Skill {
     @JoinColumn(referencedColumnName = "id_SkillType")
     private SkillTypes skillType;
 
-    @ManyToMany(mappedBy = "volunteerSkillsList",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "volunteerSkillsList",cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @JsonIgnore
     private List<Volunteer> skillsVolunteerList;
 
     /// Constructeurs
@@ -44,6 +46,7 @@ public class Skill {
         this.labelSkill = labelSkill;
         this.id_Skill = id_Skill;
     }
+
 
     /// Getters
     public Long getId_Skill() {
