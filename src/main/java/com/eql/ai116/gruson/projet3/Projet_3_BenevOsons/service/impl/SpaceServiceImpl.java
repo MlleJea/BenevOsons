@@ -59,7 +59,6 @@ public class SpaceServiceImpl implements SpaceService {
         logger.info("Début de la mise à jour de l'utilisateur avec l'ID : " + id);
 
         try {
-            // Vérifier si l'utilisateur existe
             Optional<User> optionalUser = userRepository.findById(id);
             if (!optionalUser.isPresent()) {
                 return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
@@ -83,19 +82,16 @@ public class SpaceServiceImpl implements SpaceService {
                 user.setUserAdressList(registrationDto.getAdressList());
             }
 
-            // Mise à jour spécifique pour Volunteer (pattern matching, Java 17+)
             if (user instanceof Volunteer volunteer && registrationDto.getRoleName() == RoleName.VOLUNTEER) {
-                if (registrationDto.getFirstName() != null) {
-                    volunteer.setFirstName(registrationDto.getFirstName());
-                }
                 if (registrationDto.getBirthDate() != null) {
                     volunteer.setBirthdate(registrationDto.getBirthDate());
                 }
             }
 
-            // Pour Organization, aucune mise à jour spécifique n'est définie actuellement
             if (user instanceof Organization organization && registrationDto.getRoleName() == RoleName.ORGANIZATION) {
-                // ...
+               if (registrationDto.getRna() !=null){
+                   organization.setrna(registrationDto.getRna());
+               }
             }
             userRepository.save(user);
 

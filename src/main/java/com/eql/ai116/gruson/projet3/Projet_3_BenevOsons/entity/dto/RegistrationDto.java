@@ -17,11 +17,10 @@ public class RegistrationDto {
     private List<Adress> adressList;
 
     ////// Volunteer
-    private String firstName;
     private LocalDate birthDate;
 
     ////// Organization
-    private Long rna;
+    private String rna;
 
     /// Constructors
     public RegistrationDto() {
@@ -29,32 +28,30 @@ public class RegistrationDto {
     ////// Volunteer
     // Add
     public RegistrationDto(String email, String password,
-                           String phoneNumber, RoleName roleName, String name, String firstName, LocalDate birthDate,
+                           String phoneNumber, RoleName roleName, String name, LocalDate birthDate,
                            List<Adress> adressList) {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.roleName = roleName;
         this.name = name;
-        this.firstName = firstName;
         this.birthDate = birthDate;
         this.adressList = adressList;
     }
     // Update
 
-    public RegistrationDto(String password, String phoneNumber, String name,List<Adress> adressList, String firstName) {
+    public RegistrationDto(String password, String phoneNumber, String name,List<Adress> adressList) {
 
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.name = name;
         this.adressList = adressList;
-        this.firstName = firstName;
     }
 
     ////// Organization
     // Add
     public RegistrationDto(String email, String password,
-                           String phoneNumber, RoleName roleName, String name, List<Adress> adressList, Long rna) {
+                           String phoneNumber, RoleName roleName, String name, List<Adress> adressList, String rna) {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
@@ -66,7 +63,7 @@ public class RegistrationDto {
 
     // Update
 
-    public RegistrationDto( String password, String phoneNumber, String name, List<Adress> adressList,Long rna) {
+    public RegistrationDto( String password, String phoneNumber, String name, List<Adress> adressList,String rna) {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.name = name;
@@ -96,10 +93,6 @@ public class RegistrationDto {
         return name;
     }
 
-    public String getFirstName() {
-        return firstName;
-    }
-
     public LocalDate getBirthDate() {
         return birthDate;
     }
@@ -108,7 +101,7 @@ public class RegistrationDto {
         return adressList;
     }
 
-    public Long getRna() {
+    public String getRna() {
         return rna;
     }
 
@@ -134,10 +127,6 @@ public class RegistrationDto {
         this.name = name;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
     public void setBirthDate(LocalDate birthDate) {
         this.birthDate = birthDate;
     }
@@ -146,7 +135,7 @@ public class RegistrationDto {
         this.adressList = adressList;
     }
 
-    public void setRna(Long rna) {
+    public void setRna(String rna) {
         this.rna = rna;
     }
 }

@@ -31,13 +31,13 @@ public class Mission {
     @ManyToMany(mappedBy = "volunteerMissionList")
     private List<Volunteer> missionVolunteerList;
 
-    @ManyToMany(mappedBy = "skillTypeMissionList", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany(mappedBy = "skillTypeMissionList", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
     private List<SkillTypes> missionSkillsTypeList;
 
     @ManyToMany(mappedBy = "notificationMissionList")
     private List<Notification> missionNotificationsList;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
     private Organization organization;
 
@@ -45,7 +45,7 @@ public class Mission {
     @JoinColumn(name = "adress_id")
     private Adress adress;
 
-    @ManyToOne
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
     @JoinColumn(name = "period_id")
     private Period period;
 

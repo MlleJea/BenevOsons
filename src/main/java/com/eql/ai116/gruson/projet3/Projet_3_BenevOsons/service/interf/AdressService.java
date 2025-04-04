@@ -4,9 +4,9 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
 
 public interface AdressService {
 
-    public String formatAddress(Adress adress);
-    public Adress adressWithLatLon(Adress adress);
-    public double extractLatitude(String geoJson);
-    public double extractLongitude(String geoJson);
+     String formatAddress(Adress adress);
+     Adress adressWithLatLon(Adress adress);
+     double extractLatitude(String geoJson);
+     double extractLongitude(String geoJson);
 
     }

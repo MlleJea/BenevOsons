@@ -84,10 +84,10 @@ public class SecurityServiceImpl implements SecurityService {
             }
 
 
-            String token = jwtUtilities.generateToken(registrationDto.getName(), role.getRoleName());
+            String token = jwtUtilities.generateToken(registrationDto.getEmail(), role.getRoleName());
 
             User user = userRepository.findByEmail(registrationDto.getEmail());
-            UserDto userDto = new UserDto(user.getUserId(), user.getName(), token, role.getRoleName());
+            UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), token, role.getRoleName());
 
             logger.info("Inscription réussie pour : " + registrationDto.getEmail());
             return userDto;
@@ -122,7 +122,6 @@ public class SecurityServiceImpl implements SecurityService {
         volunteer.setUserAdressList(adresses);
         volunteer.setRegistrationDate(LocalDate.now());
         volunteer.setRole(role);
-        volunteer.setFirstName(registrationDto.getFirstName());
         volunteer.setBirthdate(registrationDto.getBirthDate());
 
         logger.info("Enregistrement du bénévole : " + volunteer);
@@ -165,9 +164,9 @@ public class SecurityServiceImpl implements SecurityService {
             Role role = user.getRole();
             String roleName = role.getRoleName();
 
-            String token = jwtUtilities.generateToken(user.getName(), roleName);
+            String token = jwtUtilities.generateToken(user.getEmail(), roleName);
 
-            UserDto userDto = new UserDto(user.getUserId(), user.getName(), token, roleName);
+            UserDto userDto = new UserDto(user.getUserId(), user.getName(), user.getEmail(), token, roleName);
 
             logger.info("Authentification réussie pour " + authenticationDto.getEmail());
             return userDto;

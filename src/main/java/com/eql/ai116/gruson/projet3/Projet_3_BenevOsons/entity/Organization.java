@@ -13,7 +13,7 @@ public class Organization extends User {
 
     /// Attributs
 
-    private Long rna;
+    private String rna;
 
     @OneToMany(mappedBy = "organization", cascade = CascadeType.ALL)
     @JsonIgnore
@@ -31,7 +31,7 @@ public class Organization extends User {
 
     /// Getters
 
-    public Long getrna() {
+    public String getrna() {
         return rna;
     }
 
@@ -45,7 +45,7 @@ public class Organization extends User {
 
     /// Setters
 
-    public void setrna(Long rna) {
+    public void setrna(String rna) {
         this.rna = rna;
     }
     

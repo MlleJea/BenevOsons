@@ -8,7 +8,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
@@ -19,17 +19,18 @@ public class Period {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "period_id")
     private Long periodId;
-    private LocalDate startDate;
-    private LocalDate endDate;
+
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
 
     @OneToMany(mappedBy = "period", cascade = CascadeType.ALL)
     private List<Mission> periodMissionsList;
 
-    /// Constructors
+    /// Constructeurs
     public Period() {
     }
 
-    public Period(Long periodId, LocalDate startDate, LocalDate endDate, List<Mission> periodMissionsList) {
+    public Period(Long periodId, LocalDateTime startDate, LocalDateTime endDate, List<Mission> periodMissionsList) {
         this.periodId = periodId;
         this.startDate = startDate;
         this.endDate = endDate;
@@ -41,11 +42,11 @@ public class Period {
         return periodId;
     }
 
-    public LocalDate getStartDate() {
+    public LocalDateTime getStartDate() {
         return startDate;
     }
 
-    public LocalDate getEndDate() {
+    public LocalDateTime getEndDate() {
         return endDate;
     }
 
@@ -58,11 +59,11 @@ public class Period {
         this.periodId = periodId;
     }
 
-    public void setStartDate(LocalDate startDate) {
+    public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;
     }
 
-    public void setEndDate(LocalDate endDate) {
+    public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
 

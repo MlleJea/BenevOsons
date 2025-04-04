@@ -20,7 +20,7 @@ public class Adress {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "adress_id")
     private Long adressId;
-    private int streetNumber;
+    private String streetNumber;
     private String streetName;
     private String postalCode;
     private String city;
@@ -41,7 +41,7 @@ public class Adress {
     public Adress() {
     }
 
-    public Adress(Long adressId, int streetNumber, String streetName, String postalCode,
+    public Adress(Long adressId, String streetNumber, String streetName, String postalCode,
                   String city, Double latitude, Double longitude, List<User> adressUserList, List<Mission> adressMissionsList) {
         this.adressId = adressId;
         this.streetNumber = streetNumber;
@@ -59,7 +59,7 @@ public class Adress {
         return adressId;
     }
 
-    public int getStreetNumber() {
+    public String getStreetNumber() {
         return streetNumber;
     }
 
@@ -96,7 +96,7 @@ public class Adress {
         this.adressId = adressId;
     }
 
-    public void setStreetNumber(int streetNumber) {
+    public void setStreetNumber(String streetNumber) {
         this.streetNumber = streetNumber;
     }
 
