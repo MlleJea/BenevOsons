@@ -2,6 +2,7 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -19,13 +20,14 @@ public class SkillTypes {
     /// Attributs
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long id_SkillType;
+    @Column(name = "id_skill_type")
+    private Long idSkillType;
     private String label;
 
     @ManyToMany
     @JsonIgnore
-    @JoinTable(name = "skillType_missions",
-            joinColumns = {@JoinColumn(name = "id_SkillType")},
+    @JoinTable(name = "skill_type_missions",
+            joinColumns = {@JoinColumn(name = "id_skill_type")},
             inverseJoinColumns = {@JoinColumn(name = "mission_id")})
     private List<Mission> skillTypeMissionList;
 
@@ -39,16 +41,16 @@ public class SkillTypes {
     public SkillTypes() {
     }
 
-    public SkillTypes(Long id_SkillType, String label, List<Mission> skillTypeMissionList, List<Skill> skillList) {
-        this.id_SkillType = id_SkillType;
+    public SkillTypes(Long idSkillType, String label, List<Mission> skillTypeMissionList, List<Skill> skillList) {
+        this.idSkillType = idSkillType;
         this.label = label;
         this.skillTypeMissionList = skillTypeMissionList;
         this.skillList = skillList;
     }
 
     /// Getters
-    public Long getId_SkillType() {
-        return id_SkillType;
+    public Long getIdSkillType() {
+        return idSkillType;
     }
 
     public String getLabel() {
@@ -64,8 +66,8 @@ public class SkillTypes {
     }
 
     /// Setters
-    public void setId_SkillType(Long id_SkillType) {
-        this.id_SkillType = id_SkillType;
+    public void setIdSkillType(Long idSkillType) {
+        this.idSkillType = idSkillType;
     }
 
     public void setLabel(String label) {

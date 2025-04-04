@@ -23,7 +23,7 @@ public class Volunteer extends User{
     @JsonIgnore
     @JoinTable(name = "volunteer_skills",
             joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "id_Skill")})
+            inverseJoinColumns = {@JoinColumn(name = "id_skill")})
     private List<Skill> volunteerSkillsList;
 
     @ManyToMany

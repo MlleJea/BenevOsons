@@ -2,7 +2,6 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.SkillDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SpaceService;
@@ -33,45 +32,42 @@ public class SpaceRestController {
     private SpaceService spaceService;
 
     /// User display and update
-
     @Transactional
     @GetMapping("/display/{id}")
-    public Object displayUser (@PathVariable Long id){
+    public Object displayUser(@PathVariable Long id) {
         return spaceService.displayUser(id);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> displayUser (@PathVariable Long id, @RequestBody RegistrationDto registrationDto){
-        return spaceService.updateUser(id,registrationDto);
+    public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody RegistrationDto registrationDto) {
+        return spaceService.updateUser(id, registrationDto);
     }
 
     /// Skills for volunteers
-
     @GetMapping("/displaySkill/{id}")
-    public List<Skill> displaySkill(@PathVariable Long id){
+    public List<Skill> displaySkill(@PathVariable Long id) {
         return spaceService.displaySkill(id);
     }
 
     @GetMapping("/displaySkillTypes")
-    public List<SkillTypes> displaySkillTypes(){
+    public List<SkillTypes> displaySkillTypes() {
         return spaceService.displaySkillTypes();
     }
 
     @PostMapping("/addSkill")
-    public Skill addSkill ( @RequestBody SkillDto skillDto){
+    public Skill addSkill(@RequestBody SkillDto skillDto) {
         return spaceService.addNewSkill(skillDto);
     }
 
-    @PutMapping("/updateSkill/")
-    public Skill updateSkill ( @RequestBody SkillDto skillDto){
+    @PutMapping("/updateSkill")
+    public Skill updateSkill(@RequestBody SkillDto skillDto) {
         return spaceService.updateSkill(skillDto);
     }
 
-    @DeleteMapping("/deleteSkill/")
-    public Boolean deleteSkill (@PathVariable Long id){
+    @DeleteMapping("/deleteSkill/{id}")
+    public Boolean deleteSkill(@PathVariable Long id) {
         return spaceService.deleteSkill(id);
     }
-
 
     @Autowired
     public void setSpaceService(SpaceService spaceService) {

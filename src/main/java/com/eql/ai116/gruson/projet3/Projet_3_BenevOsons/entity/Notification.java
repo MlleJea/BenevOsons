@@ -1,6 +1,7 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +18,8 @@ public class Notification {
     /// Attributs
     @Id
     @GeneratedValue (strategy = GenerationType.IDENTITY)
-    private Long notification_id;
+    @Column(name = "notification_id")
+    private Long notificationId;
     private String label;
 
     @ManyToMany(mappedBy = "userNotificationList",cascade = CascadeType.ALL)
@@ -36,9 +38,9 @@ public class Notification {
     public Notification() {
     }
 
-    public Notification(Long notification_id, String label, List<User> notificationsUserList,
+    public Notification(Long notificationId, String label, List<User> notificationsUserList,
                         List<News> notificationsNewsList, List<Mission> notificationMissionList) {
-        this.notification_id = notification_id;
+        this.notificationId = notificationId;
         this.label = label;
         this.notificationsUserList = notificationsUserList;
         this.notificationsNewsList = notificationsNewsList;
@@ -46,8 +48,8 @@ public class Notification {
     }
 
     /// Getters
-    public Long getNotification_id() {
-        return notification_id;
+    public Long getNotificationId() {
+        return notificationId;
     }
 
     public String getLabel() {
@@ -66,8 +68,8 @@ public class Notification {
         return notificationMissionList;
     }
     /// Setters
-    public void setNotification_id(Long notification_id) {
-        this.notification_id = notification_id;
+    public void setNotificationId(Long notificationId) {
+        this.notificationId = notificationId;
     }
 
     public void setLabel(String label) {

@@ -3,7 +3,7 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
-import jakarta.persistence.DiscriminatorColumn;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -15,8 +15,6 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import org.hibernate.annotations.Fetch;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,7 +28,8 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long user_id;
+    @Column(name = "user_id")
+    private Long userId;
     private String email;
     private String password;
     private LocalDate registrationDate;
@@ -40,7 +39,7 @@ public class User {
 
     // Link to other tables
     @ManyToMany
-    @JoinTable(name = "user_address",
+    @JoinTable(name = "user_adress",
             joinColumns = {@JoinColumn(name = "user_id")},
             inverseJoinColumns = {@JoinColumn(name = "adress_id")})
     private List<Adress> userAdressList;
@@ -60,9 +59,9 @@ public class User {
     public User() {
     }
 
-    public User(Long user_id, String email, String password, LocalDate registrationDate, String name, Role role,
+    public User(Long userId, String email, String password, LocalDate registrationDate, String name, Role role,
                 List<Adress> userAdressList, String phoneNumber) {
-        this.user_id = user_id;
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
@@ -72,10 +71,10 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public User(Long user_id, String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
+    public User(Long userId, String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
                 String name, String phoneNumber, List<Adress> userAdressList, List<Notification> userNotificationList,
                 Role role) {
-        this.user_id = user_id;
+        this.userId = userId;
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
@@ -88,8 +87,8 @@ public class User {
     }
 
     /// Getters
-    public Long getUser_id() {
-        return user_id;
+    public Long getUserId() {
+        return userId;
     }
 
     public String getEmail() {
@@ -129,8 +128,8 @@ public class User {
     }
 
     /// Setters
-    public void setUser_id(Long user_id) {
-        this.user_id = user_id;
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 
     public void setEmail(String email) {

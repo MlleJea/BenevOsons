@@ -1,11 +1,11 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 
 import java.time.LocalDate;
@@ -17,7 +17,8 @@ public class Period {
     /// Attributs
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long period_id;
+    @Column(name = "period_id")
+    private Long periodId;
     private LocalDate startDate;
     private LocalDate endDate;
 
@@ -28,16 +29,16 @@ public class Period {
     public Period() {
     }
 
-    public Period(Long period_id, LocalDate startDate, LocalDate endDate, List<Mission> periodMissionsList) {
-        this.period_id = period_id;
+    public Period(Long periodId, LocalDate startDate, LocalDate endDate, List<Mission> periodMissionsList) {
+        this.periodId = periodId;
         this.startDate = startDate;
         this.endDate = endDate;
         this.periodMissionsList = periodMissionsList;
     }
 
     /// Getters
-    public Long getPeriod_id() {
-        return period_id;
+    public Long getPeriodId() {
+        return periodId;
     }
 
     public LocalDate getStartDate() {
@@ -53,8 +54,8 @@ public class Period {
     }
 
     /// Setters
-    public void setPeriod_id(Long period_id) {
-        this.period_id = period_id;
+    public void setPeriodId(Long periodId) {
+        this.periodId = periodId;
     }
 
     public void setStartDate(LocalDate startDate) {

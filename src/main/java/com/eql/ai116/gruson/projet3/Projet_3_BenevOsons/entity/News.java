@@ -1,6 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
-import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,7 +17,8 @@ import java.util.List;
 public class News {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_news;
+    @Column(name = "news_id")
+    private Long idNews;
     private LocalDate addingDate;
     private LocalDate withdrawalDate;
     private String title;
@@ -37,9 +38,9 @@ public class News {
     public News() {
     }
 
-    public News(Long id_news, LocalDate addingDate, LocalDate withdrawalDate, String title, String description,
+    public News(Long idNews, LocalDate addingDate, LocalDate withdrawalDate, String title, String description,
                 List<Notification> newsNotificationList, Organization organization) {
-        this.id_news = id_news;
+        this.idNews = idNews;
         this.addingDate = addingDate;
         this.withdrawalDate = withdrawalDate;
         this.title = title;
@@ -48,8 +49,8 @@ public class News {
         this.organization = organization;
     }
     /// Getters
-    public Long getId_news() {
-        return id_news;
+    public Long getIdNews() {
+        return idNews;
     }
 
     public LocalDate getAddingDate() {
@@ -77,8 +78,8 @@ public class News {
     }
     
     /// Setters
-    public void setId_news(Long id_news) {
-        this.id_news = id_news;
+    public void setIdNews(Long idNews) {
+        this.idNews = idNews;
     }
 
     public void setAddingDate(LocalDate addingDate) {

@@ -40,6 +40,7 @@ public class SpringSecurityConfig {
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/rest/security/**").permitAll()
                         .requestMatchers("/api/rest/space/**").permitAll()
+                        .requestMatchers("/api/rest/mission/**").permitAll()
                         //.requestMatchers("/api/rest/glossary/**").permitAll()
                         // .requestMatchers("/api/rest/gallery/**").hasAnyAuthority("USER")
                         // .requestMatchers("/api/rest/admin/**").hasAuthority("ADMIN")

@@ -1,14 +1,15 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -16,97 +17,111 @@ import java.util.List;
 @Entity
 public class Mission {
 
-    /// Attributs
+    // Attributs
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long mission_id;
+    @Column(name = "mission_id")
+    private Long missionId;
+
+    private String title;
     private String description;
     private LocalDate publicationDate;
     private LocalDate publicationClosingDate;
 
-    @ManyToMany(mappedBy = "volunteerMissionList",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "volunteerMissionList")
     private List<Volunteer> missionVolunteerList;
 
-    @ManyToMany(mappedBy = "skillTypeMissionList",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "skillTypeMissionList", cascade = {CascadeType.MERGE, CascadeType.PERSIST})
     private List<SkillTypes> missionSkillsTypeList;
 
-    @ManyToMany(mappedBy = "organizationMissionList",cascade = CascadeType.ALL)
-    private List<Organization> missionOrganizationList;
-
-    @ManyToMany(mappedBy = "notificationMissionList",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "notificationMissionList")
     private List<Notification> missionNotificationsList;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "adress_id")
+    @JoinColumn(name = "user_id")
+    private Organization organization;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "adress_id")
     private Adress adress;
 
     @ManyToOne
-    @JoinColumn(referencedColumnName = "period_id")
+    @JoinColumn(name = "period_id")
     private Period period;
 
     /// Constructors
     public Mission() {
     }
 
-    public Mission(Long mission_id, String description, LocalDate publicationDate, LocalDate publicationClosingDate,
+    public Mission(Long missionId, String title, String description, LocalDate publicationDate, LocalDate publicationClosingDate,
                    List<Volunteer> missionVolunteerList, List<SkillTypes> missionSkillsTypeList,
-                   List<Organization> missionOrganizationList, List<Notification> missionNotificationsList,
+                   Organization organization, List<Notification> missionNotificationsList,
                    Adress adress, Period period) {
-        this.mission_id = mission_id;
+        this.missionId = missionId;
+        this.title = title;
         this.description = description;
         this.publicationDate = publicationDate;
         this.publicationClosingDate = publicationClosingDate;
         this.missionVolunteerList = missionVolunteerList;
         this.missionSkillsTypeList = missionSkillsTypeList;
-        this.missionOrganizationList = missionOrganizationList;
+        this.organization = organization;
         this.missionNotificationsList = missionNotificationsList;
         this.adress = adress;
         this.period = period;
     }
 
     /// Getters
-    public Period getPeriod() {
-        return period;
+    public Long getMissionId() {
+        return missionId;
     }
 
-    public Adress getAdress() {
-        return adress;
-    }
-
-    public List<Notification> getMissionNotificationsList() {
-        return missionNotificationsList;
-    }
-
-    public List<Organization> getMissionOrganizationList() {
-        return missionOrganizationList;
-    }
-
-    public List<SkillTypes> getMissionSkillsTypeList() {
-        return missionSkillsTypeList;
-    }
-
-    public List<Volunteer> getMissionVolunteerList() {
-        return missionVolunteerList;
-    }
-
-    public LocalDate getPublicationClosingDate() {
-        return publicationClosingDate;
-    }
-
-    public LocalDate getPublicationDate() {
-        return publicationDate;
+    public String getTitle() {
+        return title;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public Long getMission_id() {
-        return mission_id;
+    public LocalDate getPublicationDate() {
+        return publicationDate;
     }
+
+    public LocalDate getPublicationClosingDate() {
+        return publicationClosingDate;
+    }
+
+    public List<Volunteer> getMissionVolunteerList() {
+        return missionVolunteerList;
+    }
+
+    public List<SkillTypes> getMissionSkillsTypeList() {
+        return missionSkillsTypeList;
+    }
+
+    public Organization getOrganization() {
+        return organization;
+    }
+
+    public List<Notification> getMissionNotificationsList() {
+        return missionNotificationsList;
+    }
+
+    public Adress getAdress() {
+        return adress;
+    }
+
+    public Period getPeriod() {
+        return period;
+    }
+
     /// Setters
-    public void setMission_id(Long mission_id) {
-        this.mission_id = mission_id;
+    public void setMissionId(Long missionId) {
+        this.missionId = missionId;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
     }
 
     public void setDescription(String description) {
@@ -129,8 +144,8 @@ public class Mission {
         this.missionSkillsTypeList = missionSkillsTypeList;
     }
 
-    public void setMissionOrganizationList(List<Organization> missionOrganizationList) {
-        this.missionOrganizationList = missionOrganizationList;
+    public void setOrganization(Organization organization) {
+        this.organization = organization;
     }
 
     public void setMissionNotificationsList(List<Notification> missionNotificationsList) {

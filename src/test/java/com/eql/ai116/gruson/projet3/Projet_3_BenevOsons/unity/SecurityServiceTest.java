@@ -1,22 +1,34 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.unity;
 
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.*;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Volunteer;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.AuthenticationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.UserDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.*;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.AuthenticationFailedException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.EmailAlreadyExistsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.RegistrationFailedException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AdressRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.RoleRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolonteerRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.security.JwtUtilities;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl.SecurityServiceImpl;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AdressService;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,145 +36,245 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class SecurityServiceImplTest {
+public class SecurityServiceTest {
+
+    @Mock
+    private UserRepository userRepository;
+
+    @Mock
+    private RoleRepository roleRepository;
+
+    @Mock
+    private VolonteerRepository volonteerRepository;
+
+    @Mock
+    private OrganizationRepository organizationRepository;
+
+    @Mock
+    private AdressService adressService;
+
+    @Mock
+    private AdressRepository adressRepository;
+
+    @Mock
+    private PasswordEncoder passwordEncoder;
+
+    @Mock
+    private AuthenticationManager authenticationManager;
+
+    @Mock
+    private JwtUtilities jwtUtilities;
+
+    @Mock
+    private Authentication authentication;
 
     @InjectMocks
     private SecurityServiceImpl securityService;
 
-    @Mock
-    private UserRepository userRepository;
-    @Mock
-    private RoleRepository roleRepository;
-    @Mock
-    private VolonteerRepository volonteerRepository;
-    @Mock
-    private OrganizationRepository organizationRepository;
-    @Mock
-    private PasswordEncoder passwordEncoder;
-    @Mock
-    private AuthenticationManager authenticationManager;
-    @Mock
-    private JwtUtilities jwtUtilities;
-
-    private RegistrationDto registrationDto;
+    private RegistrationDto volunteerRegistrationDto;
+    private RegistrationDto organizationRegistrationDto;
     private AuthenticationDto authenticationDto;
-    private Role role;
-    private User user;
-
-    private void mockCommonRegisterDependencies() {
-        when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(roleRepository.findByRoleName(any())).thenReturn(role);
-        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
-        when(jwtUtilities.generateToken(anyString(), anyList())).thenReturn("fakeToken");
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
-    }
+    private Role volunteerRole;
+    private Role organizationRole;
+    private Adress adress;
+    private List<Adress> adressList;
+    private User volunteerUser;
+    private User organizationUser;
 
     @BeforeEach
     void setUp() {
-        role = new Role(RoleName.VOLUNTEER);
-        registrationDto = new RegistrationDto("test@example.com", "password", LocalDate.now(), null,
-                "0606060606", RoleName.VOLUNTEER, "Test", "FirstName", LocalDate.of(1990, 1, 1), new Adress());
+        // Initialisation des données de test
+        volunteerRole = new Role();
+        volunteerRole.setRoleName(RoleName.VOLUNTEER);
 
-        authenticationDto = new AuthenticationDto("test@example.com", "password");
+        organizationRole = new Role();
+        organizationRole.setRoleName(RoleName.ORGANIZATION);
 
-        user = new User(1L, "TestUser", "encodedPassword", LocalDate.now(), "Test", List.of(role), new ArrayList<>(), "0606060606");
-    }
+        adress = new Adress();
+        adress.setAdressId(1L);
+        adress.setStreetName("123 Test Street");
+        adress.setCity("Test City");
+        adress.setPostalCode("12345");
+        adress.setLatitude(45.0);
+        adress.setLongitude(45.0);
 
-     @Test
-    void shouldRegisterVolunteerSuccessfully() {
-        mockCommonRegisterDependencies();
+        adressList = new ArrayList<>();
+        adressList.add(adress);
 
-        ResponseEntity<Object> response = securityService.register(registrationDto);
+        // Configuration des données pour l'inscription d'un bénévole
+        volunteerRegistrationDto = new RegistrationDto();
+        volunteerRegistrationDto.setEmail("benevole@test.com");
+        volunteerRegistrationDto.setPassword("password");
+        volunteerRegistrationDto.setName("Benevole Test");
+        volunteerRegistrationDto.setFirstName("Prenom Test");
+        volunteerRegistrationDto.setBirthDate(LocalDate.of(1990, 1, 1));
+        volunteerRegistrationDto.setPhoneNumber("0123456789");
+        volunteerRegistrationDto.setRoleName(RoleName.VOLUNTEER);
+        volunteerRegistrationDto.setAdressList(adressList);
 
-        assertEquals(200, response.getStatusCodeValue());
-        assertInstanceOf(UserDto.class, response.getBody());
+        // Configuration des données pour l'inscription d'une organisation
+        organizationRegistrationDto = new RegistrationDto();
+        organizationRegistrationDto.setEmail("association@test.com");
+        organizationRegistrationDto.setPassword("password");
+        organizationRegistrationDto.setName("Association Test");
+        organizationRegistrationDto.setPhoneNumber("0123456789");
+        organizationRegistrationDto.setRoleName(RoleName.ORGANIZATION);
+        organizationRegistrationDto.setRna(123456789L);
+        organizationRegistrationDto.setAdressList(adressList);
 
-        UserDto userDto = (UserDto) response.getBody();
-        assertEquals("Test", userDto.getName());
-        assertNotNull(userDto.getToken());
-        assertEquals("VOLUNTEER", userDto.getRole());
+        // Configuration des données pour l'authentification
+        authenticationDto = new AuthenticationDto();
+        authenticationDto.setEmail("benevole@test.com");
+        authenticationDto.setPassword("password");
 
-        verify(volonteerRepository).save(any(Volunteer.class));
+        // Configuration des entités utilisateur
+        volunteerUser = new Volunteer();
+        volunteerUser.setUserId(1L);
+        volunteerUser.setEmail("benevole@test.com");
+        volunteerUser.setName("Benevole Test");
+        volunteerUser.setRole(volunteerRole);
+
+        organizationUser = new Organization();
+        organizationUser.setUserId(2L);
+        organizationUser.setEmail("association@test.com");
+        organizationUser.setName("Association Test");
+        organizationUser.setRole(organizationRole);
     }
 
     @Test
-    void shouldReturnConflictWhenUserAlreadyExists() {
+    void registerVolunteer_Success() throws EmailAlreadyExistsException, RegistrationFailedException {
+        // Arrange
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(adressService.adressWithLatLon(any(Adress.class))).thenReturn(adress);
+        when(adressRepository.findByLatitudeAndLongitude(anyDouble(), anyDouble())).thenReturn(Optional.empty());
+        when(roleRepository.findByRoleName(RoleName.VOLUNTEER)).thenReturn(volunteerRole);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(jwtUtilities.generateToken(anyString(), anyString())).thenReturn("jwt-token");
+        when(userRepository.findByEmail("benevole@test.com")).thenReturn(volunteerUser);
+
+        // Act
+        UserDto result = securityService.register(volunteerRegistrationDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(volunteerUser.getUserId(), result.getId());
+        assertEquals(volunteerUser.getName(), result.getName());
+        assertEquals("jwt-token", result.getToken());
+        assertEquals(RoleName.VOLUNTEER.toString(), result.getRole());
+
+        // Verify
+        verify(volonteerRepository, times(1)).save(any(Volunteer.class));
+        verify(organizationRepository, never()).save(any(Organization.class));
+    }
+
+    @Test
+    void registerOrganization_Success() throws EmailAlreadyExistsException, RegistrationFailedException {
+        // Arrange
+        when(userRepository.existsByEmail(anyString())).thenReturn(false);
+        when(adressService.adressWithLatLon(any(Adress.class))).thenReturn(adress);
+        when(adressRepository.findByLatitudeAndLongitude(anyDouble(), anyDouble())).thenReturn(Optional.empty());
+        when(roleRepository.findByRoleName(RoleName.ORGANIZATION)).thenReturn(organizationRole);
+        when(passwordEncoder.encode(anyString())).thenReturn("encodedPassword");
+        when(jwtUtilities.generateToken(anyString(), anyString())).thenReturn("jwt-token");
+        when(userRepository.findByEmail("association@test.com")).thenReturn(organizationUser);
+
+        // Act
+        UserDto result = securityService.register(organizationRegistrationDto);
+
+        // Assert
+        assertNotNull(result);
+        assertEquals(organizationUser.getUserId(), result.getId());
+        assertEquals(organizationUser.getName(), result.getName());
+        assertEquals("jwt-token", result.getToken());
+        assertEquals(RoleName.ORGANIZATION.toString(), result.getRole());
+
+        // Verify
+        verify(organizationRepository, times(1)).save(any(Organization.class));
+        verify(volonteerRepository, never()).save(any(Volunteer.class));
+    }
+
+    @Test
+    void register_EmailAlreadyExists() {
+        // Arrange
         when(userRepository.existsByEmail(anyString())).thenReturn(true);
 
-        ResponseEntity<Object> response = securityService.register(registrationDto);
+        // Act & Assert
+        assertThrows(EmailAlreadyExistsException.class, () -> {
+            securityService.register(volunteerRegistrationDto);
+        });
 
-        assertEquals(409, response.getStatusCodeValue());
-        verify(userRepository, never()).save(any());
+        // Verify
+        verify(volonteerRepository, never()).save(any(Volunteer.class));
+        verify(organizationRepository, never()).save(any(Organization.class));
     }
 
     @Test
-    void shouldAuthenticateSuccessfully() {
-        Authentication authentication = mock(Authentication.class);
-
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
-        when(authentication.getName()).thenReturn("test@example.com");
-        when(userRepository.findByEmail(anyString())).thenReturn(user);
-        when(jwtUtilities.generateToken(anyString(), anyList())).thenReturn("fakeToken");
-
-        ResponseEntity<Object> response = securityService.authenticate(authenticationDto);
-
-        assertEquals(200, response.getStatusCodeValue());
-        assertInstanceOf(UserDto.class, response.getBody());
-
-        UserDto userDto = (UserDto) response.getBody();
-        assertEquals("Test", userDto.getName());
-        assertNotNull(userDto.getToken());
-    }
-
-    @Test
-    void shouldReturnBadRequestForInvalidRole() {
+    void register_RoleNotFound() {
+        // Arrange
         when(userRepository.existsByEmail(anyString())).thenReturn(false);
-        when(roleRepository.findByRoleName(any())).thenReturn(null);
+        when(adressService.adressWithLatLon(any(Adress.class))).thenReturn(adress);
+        when(adressRepository.findByLatitudeAndLongitude(anyDouble(), anyDouble())).thenReturn(Optional.empty());
+        when(roleRepository.findByRoleName(any(RoleName.class))).thenReturn(null);
 
-        ResponseEntity<Object> response = securityService.register(registrationDto);
+        // Act & Assert
+        assertThrows(RegistrationFailedException.class, () -> {
+            securityService.register(volunteerRegistrationDto);
+        });
 
-        assertEquals(400, response.getStatusCodeValue());
-        assertEquals("Rôle non valide", response.getBody());
+        // Verify
+        verify(volonteerRepository, never()).save(any(Volunteer.class));
+        verify(organizationRepository, never()).save(any(Organization.class));
     }
 
     @Test
-    void shouldReturnInternalServerErrorOnException() {
-        when(userRepository.existsByEmail(anyString())).thenThrow(new RuntimeException("Database error"));
+    void authenticate_Success() throws AuthenticationFailedException {
+        // Arrange
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("benevole@test.com");
+        when(userRepository.findByEmail("benevole@test.com")).thenReturn(volunteerUser);
+        when(jwtUtilities.generateToken(anyString(), anyString())).thenReturn("jwt-token");
 
-        ResponseEntity<Object> response = securityService.register(registrationDto);
+        // Act
+        UserDto result = securityService.authenticate(authenticationDto);
 
-        assertEquals(500, response.getStatusCodeValue());
-        assertEquals("Une erreur est survenue.", response.getBody());
+        // Assert
+        assertNotNull(result);
+        assertEquals(volunteerUser.getUserId(), result.getId());
+        assertEquals(volunteerUser.getName(), result.getName());
+        assertEquals("jwt-token", result.getToken());
+        assertEquals(RoleName.VOLUNTEER.toString(), result.getRole());
     }
 
     @Test
-    void shouldReturnUnauthorizedForInvalidCredentials() {
+    void authenticate_BadCredentials() {
+        // Arrange
         when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenThrow(new RuntimeException("Bad credentials"));
+                .thenThrow(new BadCredentialsException("Bad credentials"));
 
-        ResponseEntity<Object> response = securityService.authenticate(authenticationDto);
-
-        assertEquals(500, response.getStatusCodeValue());
-        assertEquals("Erreur d'authentification. Veuillez réessayer.", response.getBody());
+        // Act & Assert
+        assertThrows(AuthenticationFailedException.class, () -> {
+            securityService.authenticate(authenticationDto);
+        });
     }
 
     @Test
-    void shouldReturnInternalServerErrorWhenUserNotFound() {
-        Authentication authentication = mock(Authentication.class);
-        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class)))
-                .thenReturn(authentication);
-        when(authentication.getName()).thenReturn("test@example.com");
-        when(userRepository.findByEmail(anyString())).thenReturn(null);
+    void authenticate_UserNotFound() {
+        // Arrange
+        when(authenticationManager.authenticate(any(UsernamePasswordAuthenticationToken.class))).thenReturn(authentication);
+        when(authentication.getName()).thenReturn("benevole@test.com");
+        when(userRepository.findByEmail("benevole@test.com")).thenReturn(null);
 
-        ResponseEntity<Object> response = securityService.authenticate(authenticationDto);
-
-        assertEquals(500, response.getStatusCodeValue());
+        // Act & Assert
+        assertThrows(AuthenticationFailedException.class, () -> {
+            securityService.authenticate(authenticationDto);
+        });
     }
-
 }

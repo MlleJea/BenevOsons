@@ -3,6 +3,7 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Mission;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -20,7 +21,8 @@ public class Role {
     /// Attributs
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    Long role_id ;
+    @Column(name = "role_id")
+    Long roleId ;
     @Enumerated(EnumType.STRING)
     RoleName roleName ;
 
@@ -35,15 +37,15 @@ public class Role {
 
     /// Getters
     public Long getId() {
-        return role_id;
+        return roleId;
     }
 
     public String getRoleName() {
         return roleName.toString();
     }
     /// Setters
-    public void setId(Long role_id) {
-        this.role_id = role_id;
+    public void setId(Long roleId) {
+        this.roleId = roleId;
     }
 
     public void setRoleName(RoleName roleName) {

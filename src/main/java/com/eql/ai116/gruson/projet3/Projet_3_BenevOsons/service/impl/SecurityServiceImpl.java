@@ -9,6 +9,9 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationD
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.UserDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.AuthenticationFailedException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.EmailAlreadyExistsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.RegistrationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AdressRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.RoleRepository;
@@ -21,11 +24,10 @@ import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -54,73 +56,96 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Transactional
     @Override
-    public ResponseEntity<Object> register(RegistrationDto registrationDto) {
+    public UserDto register(RegistrationDto registrationDto) throws EmailAlreadyExistsException, RegistrationFailedException {
         logger.info("Début de l'inscription pour : " + registrationDto.getEmail());
 
         try {
             if (userRepository.existsByEmail(registrationDto.getEmail())) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
+                logger.warn("Email déjà utilisé: " + registrationDto.getEmail());
+                throw new EmailAlreadyExistsException("L'email est déjà utilisé: " + registrationDto.getEmail());
             }
 
+            // Adress treatment
             List<Adress> adresses = registrationDto.getAdressList();
+            processAddresses(adresses);
 
-            for (Adress adress : adresses){
-                Adress adressWithLatLon = adressService.adressWithLatLon(adress);
-                Optional<Adress> adressIsAlreadyExisting = adressRepository.findByLatitudeAndLongitude(
-                        adressWithLatLon.getLatitude(),adressWithLatLon.getLongitude());
-                if( adressIsAlreadyExisting.isEmpty()){
-                    adressRepository.save(adressWithLatLon);
-                } else adress.setAdress_id(adressIsAlreadyExisting.get().getAdress_id());
-            }
-
-
+            // Role treatment
             Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
+            if (role == null) {
+                throw new RegistrationFailedException("Rôle non trouvé: " + registrationDto.getRoleName(), null);
+            }
 
             if (registrationDto.getRoleName().equals(RoleName.VOLUNTEER)) {
-                Volunteer volunteer = new Volunteer();
-                volunteer.setEmail(registrationDto.getEmail());
-                volunteer.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-                volunteer.setPhoneNumber(registrationDto.getPhoneNumber());
-                volunteer.setName(registrationDto.getName());
-                volunteer.setUserAdressList(adresses);
-                volunteer.setRegistrationDate(LocalDate.now());
-                volunteer.setRole(role);
-                volunteer.setFirstName(registrationDto.getFirstName());
-                volunteer.setBirthdate(registrationDto.getBirthDate());
-
-                logger.info("Enregistrement du bénévole : " + volunteer);
-                volonteerRepository.save(volunteer);
+                saveVolunteer(registrationDto, adresses, role);
             } else if (registrationDto.getRoleName().equals(RoleName.ORGANIZATION)) {
-                Organization organization = new Organization();
-                organization.setEmail(registrationDto.getEmail());
-                organization.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-                organization.setPhoneNumber(registrationDto.getPhoneNumber());
-                organization.setName(registrationDto.getName());
-                organization.setUserAdressList(adresses);
-                organization.setRegistrationDate(LocalDate.now());
-                organization.setRole(role);
-                organization.setrna(registrationDto.getRna());
-
-                logger.info("Enregistrement de l'organisation : " + organization);
-                organizationRepository.save(organization);
+                saveOrganization(registrationDto, adresses, role);
+            } else {
+                throw new RegistrationFailedException("Type de rôle non pris en charge: " + registrationDto.getRoleName(), null);
             }
 
+
             String token = jwtUtilities.generateToken(registrationDto.getName(), role.getRoleName());
-            logger.info("Inscription réussie pour : " + registrationDto.getEmail());
 
             User user = userRepository.findByEmail(registrationDto.getEmail());
-            UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token, role.getRoleName());
+            UserDto userDto = new UserDto(user.getUserId(), user.getName(), token, role.getRoleName());
 
-            return ResponseEntity.status(HttpStatus.OK).body(userDto);
+            logger.info("Inscription réussie pour : " + registrationDto.getEmail());
+            return userDto;
 
+        } catch (EmailAlreadyExistsException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Erreur lors de l'inscription : ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue.");
+            throw new RegistrationFailedException("Échec de l'inscription pour: " + registrationDto.getEmail(), e);
         }
     }
 
+    private void processAddresses(List<Adress> adresses) {
+        for (Adress adress : adresses) {
+            Adress adressWithLatLon = adressService.adressWithLatLon(adress);
+            Optional<Adress> adressIsAlreadyExisting = adressRepository.findByLatitudeAndLongitude(
+                    adressWithLatLon.getLatitude(), adressWithLatLon.getLongitude());
+            if (adressIsAlreadyExisting.isEmpty()) {
+                adressRepository.save(adressWithLatLon);
+            } else {
+                adress.setAdressId(adressIsAlreadyExisting.get().getAdressId());
+            }
+        }
+    }
+
+    private void saveVolunteer(RegistrationDto registrationDto, List<Adress> adresses, Role role) {
+        Volunteer volunteer = new Volunteer();
+        volunteer.setEmail(registrationDto.getEmail());
+        volunteer.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        volunteer.setPhoneNumber(registrationDto.getPhoneNumber());
+        volunteer.setName(registrationDto.getName());
+        volunteer.setUserAdressList(adresses);
+        volunteer.setRegistrationDate(LocalDate.now());
+        volunteer.setRole(role);
+        volunteer.setFirstName(registrationDto.getFirstName());
+        volunteer.setBirthdate(registrationDto.getBirthDate());
+
+        logger.info("Enregistrement du bénévole : " + volunteer);
+        volonteerRepository.save(volunteer);
+    }
+
+    private void saveOrganization(RegistrationDto registrationDto, List<Adress> adresses, Role role) {
+        Organization organization = new Organization();
+        organization.setEmail(registrationDto.getEmail());
+        organization.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+        organization.setPhoneNumber(registrationDto.getPhoneNumber());
+        organization.setName(registrationDto.getName());
+        organization.setUserAdressList(adresses);
+        organization.setRegistrationDate(LocalDate.now());
+        organization.setRole(role);
+        organization.setrna(registrationDto.getRna());
+
+        logger.info("Enregistrement de l'organisation : " + organization);
+        organizationRepository.save(organization);
+    }
+
     @Override
-    public ResponseEntity<Object> authenticate(AuthenticationDto authenticationDto) {
+    public UserDto authenticate(AuthenticationDto authenticationDto) throws AuthenticationFailedException {
         logger.info("Début de l'authentification pour : " + authenticationDto.getEmail());
 
         try {
@@ -133,22 +158,23 @@ public class SecurityServiceImpl implements SecurityService {
             SecurityContextHolder.getContext().setAuthentication(authentication);
             User user = userRepository.findByEmail(authentication.getName());
 
-            logger.info(user);
+            if (user == null) {
+                throw new AuthenticationFailedException("Utilisateur non trouvé après authentification");
+            }
 
-            Role role =user.getRole();
+            Role role = user.getRole();
             String roleName = role.getRoleName();
 
-            String token = jwtUtilities.generateToken(user.getName(),roleName);
+            String token = jwtUtilities.generateToken(user.getName(), roleName);
 
-            UserDto userDto = new UserDto(user.getUser_id(), user.getName(), token, roleName);
+            UserDto userDto = new UserDto(user.getUserId(), user.getName(), token, roleName);
 
             logger.info("Authentification réussie pour " + authenticationDto.getEmail());
-            return ResponseEntity.ok(userDto);
+            return userDto;
 
-        } catch (Exception e){
-
-            logger.error("Erreur d'authentification : ", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur d'authentification. Veuillez réessayer.");
+        } catch (AuthenticationException e) {
+            logger.error("Échec de l'authentification : Identifiants incorrects", e);
+            throw new AuthenticationFailedException("Identifiants incorrects");
         }
     }
 

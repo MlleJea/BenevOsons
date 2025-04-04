@@ -2,6 +2,7 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,14 +22,15 @@ public class Skill {
     /// Attributs
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id_Skill;
+    @Column(name = "skill_id")
+    private Long idSkill;
     private String labelSkill;
 
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
     @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
-    @JoinColumn(referencedColumnName = "id_SkillType")
+    @JoinColumn(referencedColumnName = "id_skill_type")
     private SkillTypes skillType;
 
     @ManyToMany(mappedBy = "volunteerSkillsList",cascade = {CascadeType.MERGE, CascadeType.PERSIST})
@@ -39,18 +41,18 @@ public class Skill {
     public Skill() {
     }
 
-    public Skill(List<Volunteer> skillsVolunteerList, SkillTypes skillType, Grade grade, String labelSkill, Long id_Skill) {
+    public Skill(List<Volunteer> skillsVolunteerList, SkillTypes skillType, Grade grade, String labelSkill, Long idSkill) {
         this.skillsVolunteerList = skillsVolunteerList;
         this.skillType = skillType;
         this.grade = grade;
         this.labelSkill = labelSkill;
-        this.id_Skill = id_Skill;
+        this.idSkill = idSkill;
     }
 
 
     /// Getters
-    public Long getId_Skill() {
-        return id_Skill;
+    public Long getIdSkill() {
+        return idSkill;
     }
 
     public String getLabelSkill() {
@@ -70,8 +72,8 @@ public class Skill {
     }
 
     /// Setters
-    public void setId_Skill(Long id_Skill) {
-        this.id_Skill = id_Skill;
+    public void setIdSkill(Long idSkill) {
+        this.idSkill = idSkill;
     }
 
     public void setLabelSkill(String labelSkill) {

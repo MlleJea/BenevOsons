@@ -32,25 +32,22 @@ public class SpaceServiceImpl implements SpaceService {
 
     Logger logger = LogManager.getLogger();
 
-    /// Attributs
+    // Attributs
     private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
     private VolonteerRepository volonteerRepository;
     private SkillTypesRepository skillTypesRepository;
     private SkillRepository skillRepository;
 
-
-    /// User
+    /// USER
     @Transactional
     @Override
     public User displayUser(Long id) {
         Optional<User> user = userRepository.findById(id);
-
         if (user.isPresent()) {
             User userToDisplay = user.get();
             List<Adress> addresses = userRepository.findUserAdressesByUserId(id);
             userToDisplay.setUserAdressList(addresses);
-
             return userToDisplay;
         }
         throw new RuntimeException("Utilisateur non trouvé avec l'ID : " + id);
@@ -82,13 +79,12 @@ public class SpaceServiceImpl implements SpaceService {
                 user.setPhoneNumber(registrationDto.getPhoneNumber());
             }
 
-            if (registrationDto.getAdressList()!= null && !registrationDto.getAdressList().isEmpty()) {
+            if (registrationDto.getAdressList() != null && !registrationDto.getAdressList().isEmpty()) {
                 user.setUserAdressList(registrationDto.getAdressList());
             }
 
-            // Volunteer
-            if (user instanceof Volunteer && registrationDto.getRoleName() == RoleName.VOLUNTEER) {
-                Volunteer volunteer = (Volunteer) user;
+            // Mise à jour spécifique pour Volunteer (pattern matching, Java 17+)
+            if (user instanceof Volunteer volunteer && registrationDto.getRoleName() == RoleName.VOLUNTEER) {
                 if (registrationDto.getFirstName() != null) {
                     volunteer.setFirstName(registrationDto.getFirstName());
                 }
@@ -97,8 +93,9 @@ public class SpaceServiceImpl implements SpaceService {
                 }
             }
 
-            // Organization
-            if (user instanceof Organization && registrationDto.getRoleName() == RoleName.ORGANIZATION) {
+            // Pour Organization, aucune mise à jour spécifique n'est définie actuellement
+            if (user instanceof Organization organization && registrationDto.getRoleName() == RoleName.ORGANIZATION) {
+                // ...
             }
             userRepository.save(user);
 
@@ -107,12 +104,12 @@ public class SpaceServiceImpl implements SpaceService {
 
         } catch (Exception e) {
             logger.error("Erreur lors de la mise à jour de l'utilisateur avec l'ID : " + id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue lors de la mise à jour.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Une erreur est survenue lors de la mise à jour.");
         }
     }
 
-
-    /// Skills
+    /// SKILLS
     @Override
     public List<Skill> displaySkill(Long id) {
         return volonteerRepository.findUserSkillsByUserId(id);
@@ -131,7 +128,6 @@ public class SpaceServiceImpl implements SpaceService {
         skill.setGrade(skillDto.getGrade());
 
         String skillLabel = skillDto.getSkillTypeLabel();
-
         SkillTypes skillTypes;
         if (skillTypesRepository.existsByLabel(skillLabel)) {
             skillTypes = skillTypesRepository.findByLabel(skillLabel);
@@ -141,13 +137,14 @@ public class SpaceServiceImpl implements SpaceService {
             skillTypes = skillTypesRepository.save(skillTypes);
         }
         skill.setSkillType(skillTypes);
-        Optional<Volunteer> volunteer = volonteerRepository.findById(skillDto.getVolunteerId());
 
-        if(!volunteer.isEmpty()) {
-            skill.setSkillsVolunteerList(Collections.singletonList(volunteer.get()));
-            List<Skill> skills = volunteer.get().getVolunteerSkillsList();
+        Optional<Volunteer> volunteer = volonteerRepository.findById(skillDto.getVolunteerId());
+        if (volunteer.isPresent()) {
+            Volunteer vol = volunteer.get();
+            skill.setSkillsVolunteerList(Collections.singletonList(vol));
+            List<Skill> skills = vol.getVolunteerSkillsList();
             skills.add(skill);
-            volunteer.get().setVolunteerSkillsList(skills);
+            vol.setVolunteerSkillsList(skills);
         }
         return skillRepository.save(skill);
     }
@@ -162,7 +159,6 @@ public class SpaceServiceImpl implements SpaceService {
     public Boolean deleteSkill(Long id) {
         return null;
     }
-
 
     /// Setters
     @Autowired
