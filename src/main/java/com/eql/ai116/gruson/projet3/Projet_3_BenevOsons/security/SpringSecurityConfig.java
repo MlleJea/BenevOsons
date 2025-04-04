@@ -39,10 +39,9 @@ public class SpringSecurityConfig {
                         .requestMatchers("/error").permitAll()
                         .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/api/rest/security/**").permitAll()
-                        .requestMatchers("/api/rest/space/**").permitAll()
-                        .requestMatchers("/api/rest/mission/**").permitAll()
+                        .requestMatchers("/api/rest/space/**").hasAnyAuthority("ORGANIZATION","VOLUNTEER")
+                        .requestMatchers("/api/rest/mission/**").hasAuthority("ORGANIZATION")
                         //.requestMatchers("/api/rest/glossary/**").permitAll()
-                        // .requestMatchers("/api/rest/gallery/**").hasAnyAuthority("USER")
                         // .requestMatchers("/api/rest/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated() // Tout le reste nécessite une authentification
                 );
