@@ -11,6 +11,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.AuthenticationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.EmailAlreadyExistsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.PasswordDontMatchException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.RegistrationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AdressRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
@@ -63,6 +64,10 @@ public class SecurityServiceImpl implements SecurityService {
             if (userRepository.existsByEmail(registrationDto.getEmail())) {
                 logger.warn("Email déjà utilisé: " + registrationDto.getEmail());
                 throw new EmailAlreadyExistsException("L'email est déjà utilisé: " + registrationDto.getEmail());
+            }
+            // Password treatment
+            if(!registrationDto.getPassword().equals(registrationDto.getConfirmationPassword())) {
+                throw new PasswordDontMatchException("Les mots de passe ne correspondent pas");
             }
 
             // Adress treatment

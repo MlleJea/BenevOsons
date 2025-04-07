@@ -5,6 +5,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Grade;
 public class SkillDto {
 
     /// Attributs
+    private Long SkillId;
     private String labelSkill;
     private Grade grade;
     private String skillTypeLabel;
@@ -15,6 +16,11 @@ public class SkillDto {
     }
 
     /// Getters
+
+    public Long getSkillId() {
+        return SkillId;
+    }
+
     public String getLabelSkill() {
         return labelSkill;
     }
@@ -30,7 +36,13 @@ public class SkillDto {
     public Long getVolunteerId() {
         return volunteerId;
     }
+
     /// Setters
+
+    public void setSkillId(Long skillId) {
+        SkillId = skillId;
+    }
+
     public void setLabelSkill(String labelSkill) {
         this.labelSkill = labelSkill;
     }

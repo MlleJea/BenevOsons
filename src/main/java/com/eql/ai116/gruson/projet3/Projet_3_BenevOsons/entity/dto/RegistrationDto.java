@@ -11,6 +11,7 @@ public class RegistrationDto {
     /// Attributs
     private String email;
     private String password;
+    private String confirmationPassword;
     private String phoneNumber;
     private RoleName roleName;
     private String name;
@@ -25,27 +26,20 @@ public class RegistrationDto {
     /// Constructors
     public RegistrationDto() {
     }
+
+
     ////// Volunteer
     // Add
-    public RegistrationDto(String email, String password,
-                           String phoneNumber, RoleName roleName, String name, LocalDate birthDate,
-                           List<Adress> adressList) {
-        this.email = email;
-        this.password = password;
-        this.phoneNumber = phoneNumber;
-        this.roleName = roleName;
-        this.name = name;
+    public RegistrationDto(LocalDate birthDate, List<Adress> adressList, String name, RoleName roleName,
+                           String phoneNumber, String confirmationPassword, String password, String email) {
         this.birthDate = birthDate;
         this.adressList = adressList;
-    }
-    // Update
-
-    public RegistrationDto(String password, String phoneNumber, String name,List<Adress> adressList) {
-
-        this.password = password;
-        this.phoneNumber = phoneNumber;
         this.name = name;
-        this.adressList = adressList;
+        this.roleName = roleName;
+        this.phoneNumber = phoneNumber;
+        this.confirmationPassword = confirmationPassword;
+        this.password = password;
+        this.email = email;
     }
 
     ////// Organization
@@ -63,12 +57,13 @@ public class RegistrationDto {
 
     // Update
 
-    public RegistrationDto( String password, String phoneNumber, String name, List<Adress> adressList,String rna) {
+    public RegistrationDto(String password, String phoneNumber, String confirmationPassword, String name,
+                           List<Adress> adressList) {
         this.password = password;
         this.phoneNumber = phoneNumber;
+        this.confirmationPassword = confirmationPassword;
         this.name = name;
         this.adressList = adressList;
-        this.rna = rna;
     }
 
     /// Getters
@@ -79,6 +74,10 @@ public class RegistrationDto {
 
     public String getPassword() {
         return password;
+    }
+
+    public String getConfirmationPassword() {
+        return confirmationPassword;
     }
 
     public String getPhoneNumber() {
@@ -115,7 +114,11 @@ public class RegistrationDto {
         this.password = password;
     }
 
-        public void setPhoneNumber(String phoneNumber) {
+    public void setConfirmationPassword(String confirmationPassword) {
+        this.confirmationPassword = confirmationPassword;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 

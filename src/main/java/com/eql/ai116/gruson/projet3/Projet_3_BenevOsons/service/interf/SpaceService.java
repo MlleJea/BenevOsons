@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf;
 
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Grade;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
@@ -14,12 +15,14 @@ public interface SpaceService {
     /// User
     User displayUser(Long id);
 
-    ResponseEntity<Object> updateUser(Long id, RegistrationDto registrationDto);
+    String updateUser(Long id, RegistrationDto registrationDto);
 
     /// Boolean
     List<Skill> displaySkill(Long id);
 
     List<SkillTypes> displaySkillTypes();
+
+    List<String> displayGrades();
 
     Skill addNewSkill(SkillDto skillDto);
 
