@@ -6,6 +6,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.SkillDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.ResourceNotFoundException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.ReferentielService;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SpaceService;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -79,31 +80,11 @@ public class SpaceRestController {
         }
     }
 
-    @GetMapping("/displaySkillTypes")
-    public ResponseEntity<List<SkillTypes>> displaySkillTypes() {
-        try {
-            List<SkillTypes> skillTypes = spaceService.displaySkillTypes();
-            return ResponseEntity.ok(skillTypes);
-        } catch (Exception e) {
-            logger.error("Erreur lors de l'affichage des types de compétences.", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
-        }
-    }
-
-    @GetMapping("/displayGrades")
-    public ResponseEntity<List<String>> displayGrades() {
-        try {
-            List<String> grades = spaceService.displayGrades();
-            return ResponseEntity.ok(grades);
-        } catch (Exception e) {
-            logger.error("Erreur lors de l'affichage des notes.", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());
-        }
-    }
-
 
     @PostMapping("/addSkill")
     public ResponseEntity<Skill> addSkill(@RequestBody SkillDto skillDto) {
+
+        logger.info("Bien dans le back chef");
         try {
             Skill newSkill = spaceService.addNewSkill(skillDto);
             return ResponseEntity.status(HttpStatus.CREATED).body(newSkill);
@@ -149,4 +130,5 @@ public class SpaceRestController {
     public void setSpaceService(SpaceService spaceService) {
         this.spaceService = spaceService;
     }
+
 }

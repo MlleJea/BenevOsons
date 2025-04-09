@@ -1,7 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Grade;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
@@ -110,18 +109,7 @@ public class SpaceServiceImpl implements SpaceService {
         return skills;
     }
 
-    @Override
-    public List<SkillTypes> displaySkillTypes() {
-        return skillTypesRepository.findAll();
-    }
 
-    @Override
-    public List<String> displayGrades() {
-
-        return Arrays.asList(Grade.values()).stream()
-                .map(Grade::getNumber)
-                .collect(Collectors.toList());
-    }
 
     @Transactional
     @Override

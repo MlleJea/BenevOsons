@@ -41,6 +41,7 @@ public class SpringSecurityConfig {
                         .requestMatchers("/api/rest/security/**").permitAll()
                         .requestMatchers("/api/rest/space/**").permitAll()
                         //.requestMatchers("/api/rest/space/**").hasAnyAuthority("ORGANIZATION","VOLUNTEER")
+                        .requestMatchers("/api/rest/referentiel/**").permitAll()
                         .requestMatchers("/api/rest/mission/**").hasAuthority("ORGANIZATION")
                         //.requestMatchers("/api/rest/glossary/**").permitAll()
                         // .requestMatchers("/api/rest/admin/**").hasAuthority("ADMIN")

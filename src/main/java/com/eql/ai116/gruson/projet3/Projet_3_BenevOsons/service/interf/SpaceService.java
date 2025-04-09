@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
+
 public interface SpaceService {
 
     /// User
@@ -19,10 +20,6 @@ public interface SpaceService {
 
     /// Boolean
     List<Skill> displaySkill(Long id);
-
-    List<SkillTypes> displaySkillTypes();
-
-    List<String> displayGrades();
 
     Skill addNewSkill(SkillDto skillDto);
 
