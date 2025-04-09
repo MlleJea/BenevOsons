@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,6 +25,7 @@ public class Period {
     private LocalDateTime endDate;
 
     @OneToMany(mappedBy = "period", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Mission> periodMissionsList;
 
     /// Constructeurs

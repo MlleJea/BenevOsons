@@ -24,11 +24,8 @@ public class SkillTypes {
     private Long idSkillType;
     private String label;
 
-    @ManyToMany
+    @ManyToMany (mappedBy = "missionSkillsTypeList")
     @JsonIgnore
-    @JoinTable(name = "skill_type_missions",
-            joinColumns = {@JoinColumn(name = "id_skill_type")},
-            inverseJoinColumns = {@JoinColumn(name = "mission_id")})
     private List<Mission> skillTypeMissionList;
 
 

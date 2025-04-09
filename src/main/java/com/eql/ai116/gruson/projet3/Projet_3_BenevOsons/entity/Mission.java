@@ -1,5 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -8,6 +9,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
@@ -29,23 +31,29 @@ public class Mission {
     private LocalDate publicationClosingDate;
 
     @ManyToMany(mappedBy = "volunteerMissionList")
+    @JsonIgnore
     private List<Volunteer> missionVolunteerList;
 
-    @ManyToMany(mappedBy = "skillTypeMissionList", cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.EAGER)
+    @JoinTable(name = "missions_skill_type",
+            joinColumns = {@JoinColumn(name = "mission_id")},
+            inverseJoinColumns = {@JoinColumn(name = "id_skill_type")})
     private List<SkillTypes> missionSkillsTypeList;
 
     @ManyToMany(mappedBy = "notificationMissionList")
+    @JsonIgnore
     private List<Notification> missionNotificationsList;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "user_id")
+    @JsonIgnore
     private Organization organization;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "adress_id")
     private Adress adress;
 
-    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST})
+    @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "period_id")
     private Period period;
 

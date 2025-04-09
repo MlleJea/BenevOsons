@@ -118,24 +118,27 @@ public class SpaceServiceImpl implements SpaceService {
         skill.setLabelSkill(skillDto.getLabelSkill());
         skill.setGrade(skillDto.getGrade());
 
-        String skillLabel = skillDto.getSkillTypeLabel();
-        SkillTypes skillTypes;
-        if (skillTypesRepository.existsByLabel(skillLabel)) {
-            skillTypes = skillTypesRepository.findByLabel(skillLabel);
+        String skillTypeLabel = skillDto.getSkillTypeLabel();
+        SkillTypes skillType;
+        if (skillTypesRepository.existsByLabel(skillTypeLabel)) {
+            Optional<SkillTypes> skillTypeExist = skillTypesRepository.findByLabel(skillTypeLabel);
+            if (skillTypeExist.isPresent()) {
+                skillType = skillTypeExist.get();
+            } else {
+                throw new IllegalStateException("Erreur de cohérence des données : SkillType existe mais n'a pas été trouvé.");
+            }
         } else {
-            skillTypes = new SkillTypes();
-            skillTypes.setLabel(skillLabel);
-            skillTypes = skillTypesRepository.save(skillTypes);
+            skillType = new SkillTypes();
+            skillType.setLabel(skillTypeLabel);
+            skillType = skillTypesRepository.save(skillType);
         }
-        skill.setSkillType(skillTypes);
+        skill.setSkillType(skillType);
 
         Optional<Volunteer> volunteer = volonteerRepository.findById(skillDto.getVolunteerId());
         if (volunteer.isPresent()) {
             Volunteer vol = volunteer.get();
-            skill.setSkillsVolunteerList(Collections.singletonList(vol));
-            List<Skill> skills = vol.getVolunteerSkillsList();
-            skills.add(skill);
-            vol.setVolunteerSkillsList(skills);
+            skill.getSkillsVolunteerList().add(vol);
+            vol.getVolunteerSkillsList().add(skill);
         } else {
             throw new ResourceNotFoundException("Volontaire non trouvé avec l'ID : " + skillDto.getVolunteerId());
         }
@@ -154,16 +157,20 @@ public class SpaceServiceImpl implements SpaceService {
         skillToUpdate.setGrade(skillDto.getGrade());
 
         String skillTypeLabel = skillDto.getSkillTypeLabel();
-        SkillTypes skillTypes;
+        SkillTypes skillType;
         if (skillTypesRepository.existsByLabel(skillTypeLabel)) {
-            skillTypes = skillTypesRepository.findByLabel(skillTypeLabel);
-            skillToUpdate.setSkillType(skillTypes);
+            Optional<SkillTypes> skillTypeExist = skillTypesRepository.findByLabel(skillTypeLabel);
+            if (skillTypeExist.isPresent()) {
+                skillType = skillTypeExist.get();
+            } else {
+                throw new IllegalStateException("Erreur de cohérence des données : SkillType existe mais n'a pas été trouvé.");
+            }
         } else {
-            skillTypes = new SkillTypes();
-            skillTypes.setLabel(skillTypeLabel);
-            skillTypes = skillTypesRepository.save(skillTypes);
-            skillToUpdate.setSkillType(skillTypes);
+            skillType = new SkillTypes();
+            skillType.setLabel(skillTypeLabel);
+            skillType = skillTypesRepository.save(skillType);
         }
+        skillToUpdate.setSkillType(skillType);
 
         Optional<Volunteer> optionalVolunteer = volonteerRepository.findById(skillDto.getVolunteerId());
         if (!optionalVolunteer.isPresent()) {

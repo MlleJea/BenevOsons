@@ -47,7 +47,7 @@ public class SpaceRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             logger.error("Erreur lors de l'affichage de l'utilisateur avec l'ID : {}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur interne est survenue.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -61,7 +61,7 @@ public class SpaceRestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
             logger.error("Erreur lors de la mise à jour de l'utilisateur avec l'ID : {}", id, e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur interne est survenue.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
     }
 
@@ -73,7 +73,7 @@ public class SpaceRestController {
             return ResponseEntity.ok(skills);
         } catch (ResourceNotFoundException e) {
             logger.warn("Compétences non trouvées pour l'utilisateur avec l'ID : {}", id, e);
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of()); // Retourner une liste vide ou un message spécifique
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(List.of());
         } catch (Exception e) {
             logger.error("Erreur lors de l'affichage des compétences pour l'utilisateur avec l'ID : {}", id, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(List.of());

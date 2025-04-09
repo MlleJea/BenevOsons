@@ -114,7 +114,6 @@ public class SecurityServiceTest {
         volunteerRegistrationDto.setEmail("benevole@test.com");
         volunteerRegistrationDto.setPassword("password");
         volunteerRegistrationDto.setName("Benevole Test");
-        volunteerRegistrationDto.setFirstName("Prenom Test");
         volunteerRegistrationDto.setBirthDate(LocalDate.of(1990, 1, 1));
         volunteerRegistrationDto.setPhoneNumber("0123456789");
         volunteerRegistrationDto.setRoleName(RoleName.VOLUNTEER);
@@ -127,7 +126,7 @@ public class SecurityServiceTest {
         organizationRegistrationDto.setName("Association Test");
         organizationRegistrationDto.setPhoneNumber("0123456789");
         organizationRegistrationDto.setRoleName(RoleName.ORGANIZATION);
-        organizationRegistrationDto.setRna(123456789L);
+        organizationRegistrationDto.setRna("123456789");
         organizationRegistrationDto.setAdressList(adressList);
 
         // Configuration des données pour l'authentification
