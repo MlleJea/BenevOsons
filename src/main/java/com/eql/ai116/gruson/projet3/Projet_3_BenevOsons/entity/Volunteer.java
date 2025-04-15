@@ -18,11 +18,8 @@ public class Volunteer extends User{
     /// Attributs
     private LocalDate birthdate;
 
-    @ManyToMany
+    @ManyToMany(mappedBy = "skillsVolunteerList")
     @JsonIgnore
-    @JoinTable(name = "volunteer_skills",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "id_skill")})
     private List<Skill> volunteerSkillsList;
 
     @ManyToMany

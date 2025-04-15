@@ -182,6 +182,10 @@ public class SecurityServiceImpl implements SecurityService {
         }
     }
 
+    /// Private methods
+
+
+
     /// Setters
     @Autowired
     public void setUserRepository(UserRepository userRepository) {

@@ -1,6 +1,7 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.CacheStoreMode;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -24,7 +25,6 @@ public class Mission {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "mission_id")
     private Long missionId;
-
     private String title;
     private String description;
     private LocalDate publicationDate;
@@ -44,7 +44,7 @@ public class Mission {
     @JsonIgnore
     private List<Notification> missionNotificationsList;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(cascade = {CascadeType.MERGE, CascadeType.PERSIST}, fetch = FetchType.EAGER )
     @JoinColumn(name = "user_id")
     @JsonIgnore
     private Organization organization;

@@ -21,7 +21,7 @@ public interface SpaceService {
     /// Boolean
     List<Skill> displaySkill(Long id);
 
-    Skill addNewSkill(SkillDto skillDto);
+    Skill addNewSkill(SkillDto skillDto, Long id);
 
     Skill updateSkill(SkillDto skillDto);
 

@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -110,10 +111,11 @@ public class SpaceServiceImpl implements SpaceService {
     }
 
 
-
     @Transactional
     @Override
-    public Skill addNewSkill(SkillDto skillDto) {
+    public Skill addNewSkill(SkillDto skillDto, Long id) {
+        System.out.println(skillDto);
+
         Skill skill = new Skill();
         skill.setLabelSkill(skillDto.getLabelSkill());
         skill.setGrade(skillDto.getGrade());
@@ -134,11 +136,13 @@ public class SpaceServiceImpl implements SpaceService {
         }
         skill.setSkillType(skillType);
 
-        Optional<Volunteer> volunteer = volonteerRepository.findById(skillDto.getVolunteerId());
+        List<Volunteer> skillsVolunteers = new ArrayList<>();
+        skill.setSkillsVolunteerList(skillsVolunteers);
+
+        Optional<Volunteer> volunteer = volonteerRepository.findById(id);
         if (volunteer.isPresent()) {
             Volunteer vol = volunteer.get();
             skill.getSkillsVolunteerList().add(vol);
-            vol.getVolunteerSkillsList().add(skill);
         } else {
             throw new ResourceNotFoundException("Volontaire non trouvé avec l'ID : " + skillDto.getVolunteerId());
         }

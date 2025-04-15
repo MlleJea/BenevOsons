@@ -11,6 +11,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 
@@ -33,7 +34,10 @@ public class Skill {
     @JoinColumn(referencedColumnName = "id_skill_type")
     private SkillTypes skillType;
 
-    @ManyToMany(mappedBy = "volunteerSkillsList",cascade = {CascadeType.MERGE, CascadeType.PERSIST})
+    @ManyToMany
+    @JoinTable(name = "volunteer_skills",
+            joinColumns = {@JoinColumn(name = "id_skill")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id")})
     @JsonIgnore
     private List<Volunteer> skillsVolunteerList;
 

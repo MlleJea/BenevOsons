@@ -10,6 +10,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.MissionReposi
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SkillTypesRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.MissionsService;
+import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.aspectj.weaver.ast.Or;
@@ -40,6 +41,7 @@ public class MissionServiceImpl implements MissionsService {
          return missionRepository.findAll();
     }
 
+    @Transactional
     @Override
     public Mission addMission(Long id, Mission mission) throws UserNotFoundException {
         mission.setPublicationDate(LocalDate.now());

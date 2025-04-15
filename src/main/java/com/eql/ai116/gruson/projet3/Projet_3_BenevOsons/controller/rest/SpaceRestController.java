@@ -81,12 +81,14 @@ public class SpaceRestController {
     }
 
 
-    @PostMapping("/addSkill")
-    public ResponseEntity<Skill> addSkill(@RequestBody SkillDto skillDto) {
+    @PostMapping("/addSkill/{id}")
+    public ResponseEntity<Skill> addSkill(@RequestBody SkillDto skillDto, @PathVariable Long id) {
+        System.out.println(skillDto);
 
-        logger.info("Bien dans le back chef");
+        logger.error(skillDto);
+        logger.error("Bien dans le back chef");
         try {
-            Skill newSkill = spaceService.addNewSkill(skillDto);
+            Skill newSkill = spaceService.addNewSkill(skillDto, id);
             return ResponseEntity.status(HttpStatus.CREATED).body(newSkill);
         } catch (ResourceNotFoundException e) {
             logger.warn("Bénévole non trouvé lors de l'ajout de la compétence : {}", skillDto.getVolunteerId(), e);
