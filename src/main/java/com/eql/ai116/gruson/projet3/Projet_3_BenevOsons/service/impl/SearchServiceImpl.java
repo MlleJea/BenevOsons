@@ -3,7 +3,7 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Mission;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Period;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.MissionSearchCriteriaDTO;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SearchRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,23 +17,12 @@ public class SearchServiceImpl implements SearchService {
     SearchRepository searchRepository;
 
     @Override
-    public List<Mission> searchByCity(String city) {
-        return searchRepository.findByCity(city);
-    }
-
-    @Override
-    public List<Mission> searchBySkills(Long skillTypeId) {
-        return searchRepository.findBySkillTypeId(skillTypeId);
-    }
-
-    @Override
-    public List<Mission> searchByPeriod(Period period) {
-        return List.of();
-    }
-
-    @Override
-    public List<Mission> searchByDistance(Adress adress) {
-        return List.of();
+    public List<Mission> searchMissionsWithFilters(MissionSearchCriteriaDTO criteria) {
+        return searchRepository.findMissionsWithFilters(
+                criteria.getCity(),
+                criteria.getSkillTypeIds(),
+                criteria.getStartDate(),
+                criteria.getEndDate());
     }
 
     ///  Setter

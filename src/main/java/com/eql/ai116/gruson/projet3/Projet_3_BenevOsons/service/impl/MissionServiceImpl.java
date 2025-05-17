@@ -44,6 +44,9 @@ public class MissionServiceImpl implements MissionsService {
     @Transactional
     @Override
     public Mission addMission(Long id, Mission mission) throws UserNotFoundException {
+
+        logger.info(mission);
+
         mission.setPublicationDate(LocalDate.now());
 
         Adress treatedAdress = adressService.adressWithLatLon(mission.getAdress());

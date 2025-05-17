@@ -1,3 +1,15 @@
+/**
+ * ReferentielController.java
+ * Contrôleur REST qui fournit les données de référence pour l'application.
+ *
+ * Ce contrôleur expose des endpoints permettant de récupérer:
+ *   Les types de compétences disponibles
+ *   Les grades disponibles
+ *
+ * @author Jeanne GRUSON
+ * @version 1.0
+ */
+
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
@@ -19,11 +31,15 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class ReferentielController {
 
-    private Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private ReferentielService referentielService;
 
-
+    /**
+     * Récupère tous les types de compétences disponibles.
+     *
+     * @return ResponseEntity contenant la liste des types de compétences ou une liste vide en cas d'erreur
+     */
     @GetMapping("/displaySkillTypes")
     public ResponseEntity<List<SkillTypes>> displaySkillTypes() {
         try {
@@ -35,6 +51,11 @@ public class ReferentielController {
         }
     }
 
+    /**
+     * Récupère tous les grades disponibles.
+     *
+     * @return ResponseEntity contenant la liste des grades ou une liste vide en cas d'erreur
+     */
     @GetMapping("/displayGrades")
     public ResponseEntity<List<String>> displayGrades() {
         try {

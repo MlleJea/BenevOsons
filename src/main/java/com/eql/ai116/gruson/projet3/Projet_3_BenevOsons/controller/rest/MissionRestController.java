@@ -1,3 +1,17 @@
+/**
+ * MissionRestController.java
+ * Contrôleur REST qui gère les opérations CRUD pour les missions des utilisateurs.
+ *
+ * Ce contrôleur expose des endpoints permettant de:
+ *  Afficher les missions d'un utilisateur
+ *  Ajouter une nouvelle mission
+ *  Mettre à jour une mission existante
+ *  Supprimer une mission
+ *
+ * @author Jeanne GRUSON
+ * @version 1.0
+ */
+
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 
@@ -25,10 +39,16 @@ import java.util.List;
 @CrossOrigin(origins = "*")
 public class MissionRestController {
 
-    Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
-    MissionsService missionsService;
+    private MissionsService missionsService;
 
+    /**
+     * Récupère toutes les missions d'un utilisateur spécifique.
+     *
+     * @param id Identifiant de l'utilisateur
+     * @return ResponseEntity contenant la liste des missions ou une erreur
+     */
     @GetMapping("/displayMyMissions/{id}")
     public ResponseEntity<Object> displayMyMissions(@PathVariable Long id){
         try {
@@ -40,8 +60,16 @@ public class MissionRestController {
         }
     }
 
+    /**
+     * Ajoute une nouvelle mission pour un utilisateur spécifique.
+     *
+     * @param id Identifiant de l'utilisateur
+     * @param mission Objet Mission à ajouter
+     * @return ResponseEntity contenant la mission créée ou une erreur
+     */
     @PostMapping("/add/{id}")
     public ResponseEntity<Object> addMission(@PathVariable Long id, @RequestBody Mission mission){
+        System.out.println(mission);
         try {
             Mission okMission = missionsService.addMission(id, mission);
             return ResponseEntity.ok(okMission);
@@ -51,6 +79,13 @@ public class MissionRestController {
         }
     }
 
+    /**
+     * Met à jour une mission existante pour un utilisateur spécifique.
+     *
+     * @param id Identifiant de l'utilisateur
+     * @param mission Objet Mission mis à jour
+     * @return ResponseEntity contenant la mission mise à jour ou une erreur
+     */
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> updateMission(@PathVariable Long id, @RequestBody Mission mission){
         try {
@@ -62,6 +97,13 @@ public class MissionRestController {
         }
     }
 
+    /**
+     * Supprime une mission spécifique d'un utilisateur.
+     *
+     * @param id Identifiant de l'utilisateur
+     * @param missionId Identifiant de la mission à supprimer
+     * @return ResponseEntity contenant un message de confirmation ou une erreur
+     */
     @DeleteMapping("/delete/{id}/{missionId}")
     public ResponseEntity<Object> deleteMission(@PathVariable Long id, @PathVariable Long missionId){
         try {

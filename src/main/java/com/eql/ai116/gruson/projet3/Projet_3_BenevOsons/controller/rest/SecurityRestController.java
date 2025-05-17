@@ -1,3 +1,15 @@
+/**
+ * SecurityRestController.java
+ * Contrôleur REST qui gère les opérations de sécurité de l'application.
+ *
+ * Ce contrôleur expose des endpoints permettant de:
+ *  Enregistrer un nouvel utilisateur
+ *  Authentifier un utilisateur existant
+ *
+ * @author Jeanne GRUSON
+ * @version 1.0
+ */
+
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.AuthenticationDto;
@@ -24,12 +36,19 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("api/rest/security")
 public class SecurityRestController {
 
-    private Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     /// Attributs
     private SecurityService securityService;
 
     /// EndPoints
+
+    /**
+     * Enregistre un nouvel utilisateur dans le système.
+     *
+     * @param registrationDto Objet contenant les informations d'enregistrement
+     * @return ResponseEntity contenant les informations de l'utilisateur créé ou un message d'erreur
+     */
     @PostMapping("/register")
     public ResponseEntity<Object> registerUser(@RequestBody RegistrationDto registrationDto) {
         logger.info("Demande d'inscription reçue pour l'email: " + registrationDto.getEmail());
@@ -46,6 +65,12 @@ public class SecurityRestController {
         }
     }
 
+    /**
+     * Authentifie un utilisateur avec ses identifiants.
+     *
+     * @param authenticationDto Objet contenant les informations d'authentification
+     * @return ResponseEntity contenant les informations de l'utilisateur authentifié ou un message d'erreur
+     */
     @PostMapping("/authenticate")
     public ResponseEntity<Object> authenticate(@RequestBody AuthenticationDto authenticationDto) {
         logger.info("Demande d'authentification reçue pour l'email: " + authenticationDto.getEmail());

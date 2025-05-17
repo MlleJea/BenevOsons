@@ -5,6 +5,9 @@ INSERT INTO `role` (`role_name`) VALUES ('ADMIN');
 INSERT INTO `skill_types` (`label`) VALUES ('Service a la personne');
 INSERT INTO `skill_types` (`label`) VALUES ('Conduite');
 INSERT INTO `skill_types` (`label`) VALUES ('Langues');
+INSERT INTO `skill_types` (`label`) VALUES ('Restauration');
+INSERT INTO `skill_types` (`label`) VALUES ('Prévention');
+INSERT INTO `skill_types` (`label`) VALUES ('Assistance médicale');
 
 INSERT INTO adress (street_number, street_name, postal_code, city, latitude, longitude) VALUES ('10', 'Rue de la Paix', '75002', 'Paris', 48.866667, 2.333333);
 INSERT INTO adress (street_number, street_name, postal_code, city, latitude, longitude) VALUES ('25', 'Avenue des Champs-Élysées', '75008', 'Paris', 48.873792, 2.295028);

@@ -27,6 +27,7 @@ public class Mission {
     private Long missionId;
     private String title;
     private String description;
+    private Integer numberVolunteerSearch;
     private LocalDate publicationDate;
     private LocalDate publicationClosingDate;
 
@@ -61,23 +62,6 @@ public class Mission {
     public Mission() {
     }
 
-    public Mission(Long missionId, String title, String description, LocalDate publicationDate, LocalDate publicationClosingDate,
-                   List<Volunteer> missionVolunteerList, List<SkillTypes> missionSkillsTypeList,
-                   Organization organization, List<Notification> missionNotificationsList,
-                   Adress adress, Period period) {
-        this.missionId = missionId;
-        this.title = title;
-        this.description = description;
-        this.publicationDate = publicationDate;
-        this.publicationClosingDate = publicationClosingDate;
-        this.missionVolunteerList = missionVolunteerList;
-        this.missionSkillsTypeList = missionSkillsTypeList;
-        this.organization = organization;
-        this.missionNotificationsList = missionNotificationsList;
-        this.adress = adress;
-        this.period = period;
-    }
-
     /// Getters
     public Long getMissionId() {
         return missionId;
@@ -89,6 +73,10 @@ public class Mission {
 
     public String getDescription() {
         return description;
+    }
+
+    public Integer getNbVolunteerSearch() {
+        return numberVolunteerSearch;
     }
 
     public LocalDate getPublicationDate() {
@@ -134,6 +122,10 @@ public class Mission {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public void setNbVolunteerSearch(Integer nbVolunteerSearch) {
+        this.numberVolunteerSearch = nbVolunteerSearch;
     }
 
     public void setPublicationDate(LocalDate publicationDate) {

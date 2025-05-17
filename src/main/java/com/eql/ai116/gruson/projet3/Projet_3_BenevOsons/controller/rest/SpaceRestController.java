@@ -1,12 +1,22 @@
+/**
+ * SpaceRestController.java
+ * Contrôleur REST qui gère les opérations de l'espace utilisateur.
+ *
+ * Ce contrôleur expose des endpoints permettant de:
+ *  Afficher et mettre à jour les informations d'un utilisateur
+ *  Gérer les compétences d'un bénévole (afficher, ajouter, mettre à jour, supprimer)
+ *
+ * @author Jeanne GRUSON
+ * @version 1.0
+ */
+
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.SkillDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.ResourceNotFoundException;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.ReferentielService;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SpaceService;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -31,11 +41,16 @@ import java.util.List;
 @RequestMapping("api/rest/space")
 public class SpaceRestController {
 
-    private Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger();
 
     private SpaceService spaceService;
 
-    /// User display and updatef
+    /**
+     * Affiche les informations d'un utilisateur spécifique.
+     *
+     * @param id Identifiant de l'utilisateur
+     * @return ResponseEntity contenant les informations de l'utilisateur ou un message d'erreur
+     */
     @Transactional
     @GetMapping("/display/{id}")
     public ResponseEntity<Object> displayUser(@PathVariable Long id) {
@@ -51,6 +66,13 @@ public class SpaceRestController {
         }
     }
 
+    /**
+     * Met à jour les informations d'un utilisateur.
+     *
+     * @param id Identifiant de l'utilisateur
+     * @param registrationDto Objet contenant les nouvelles informations de l'utilisateur
+     * @return ResponseEntity contenant un message de confirmation ou d'erreur
+     */
     @PutMapping("/update/{id}")
     public ResponseEntity<Object> updateUser(@PathVariable Long id, @RequestBody RegistrationDto registrationDto) {
         try {
@@ -65,7 +87,12 @@ public class SpaceRestController {
         }
     }
 
-    /// Skills for volunteers
+    /**
+     * Affiche les compétences d'un bénévole spécifique.
+     *
+     * @param id Identifiant du bénévole
+     * @return ResponseEntity contenant la liste des compétences ou une liste vide en cas d'erreur
+     */
     @GetMapping("/displaySkill/{id}")
     public ResponseEntity<List<Skill>> displaySkill(@PathVariable Long id) {
         try {
@@ -81,12 +108,17 @@ public class SpaceRestController {
     }
 
 
+    /**
+     * Ajoute une nouvelle compétence à un bénévole.
+     *
+     * @param skillDto Objet contenant les informations de la compétence
+     * @param id Identifiant du bénévole
+     * @return ResponseEntity contenant la compétence créée ou null en cas d'erreur
+     */
     @PostMapping("/addSkill/{id}")
     public ResponseEntity<Skill> addSkill(@RequestBody SkillDto skillDto, @PathVariable Long id) {
-        System.out.println(skillDto);
 
         logger.error(skillDto);
-        logger.error("Bien dans le back chef");
         try {
             Skill newSkill = spaceService.addNewSkill(skillDto, id);
             return ResponseEntity.status(HttpStatus.CREATED).body(newSkill);
@@ -99,6 +131,12 @@ public class SpaceRestController {
         }
     }
 
+    /**
+     * Met à jour une compétence existante.
+     *
+     * @param skillDto Objet contenant les nouvelles informations de la compétence
+     * @return ResponseEntity contenant la compétence mise à jour ou null en cas d'erreur
+     */
     @PutMapping("/updateSkill")
     public ResponseEntity<Skill> updateSkill(@RequestBody SkillDto skillDto) {
         try {
@@ -113,6 +151,12 @@ public class SpaceRestController {
         }
     }
 
+    /**
+     * Supprime une compétence spécifique.
+     *
+     * @param id Identifiant de la compétence à supprimer
+     * @return ResponseEntity avec un statut HTTP 204 en cas de succès ou 404/500 en cas d'erreur
+     */
     @DeleteMapping("/deleteSkill/{id}")
     public ResponseEntity<Void> deleteSkill(@PathVariable Long id) {
         try {
