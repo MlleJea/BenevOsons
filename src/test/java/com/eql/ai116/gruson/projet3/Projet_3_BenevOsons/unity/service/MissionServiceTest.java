@@ -68,12 +68,12 @@ public class MissionServiceTest {
 
     @Test
     void testDisplayAllMissionsForVolunteer() {
-        when(missionRepository.findAllByMissionVolunteerList_UserId(2L)).thenReturn(List.of(mission));
+        when(missionRepository.findAllMissionsByVolunteerUserId(2L)).thenReturn(List.of(mission));
 
         List<Mission> result = missionService.displayAllMissionsForVolunteer(2L);
 
         assertEquals(1, result.size());
-        verify(missionRepository).findAllByMissionVolunteerList_UserId(2L);
+        verify(missionRepository).findAllMissionsByVolunteerUserId(2L);
     }
 
     @Test
