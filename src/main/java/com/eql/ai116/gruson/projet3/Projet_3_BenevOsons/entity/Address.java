@@ -13,13 +13,13 @@ import jakarta.persistence.OneToMany;
 import java.util.List;
 
 @Entity
-public class Adress {
+public class Address {
 
     /// Attributs
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "adress_id")
-    private Long adressId;
+    @Column(name = "address_id")
+    private Long addressId;
     private String streetNumber;
     private String streetName;
     private String postalCode;
@@ -27,36 +27,36 @@ public class Adress {
     private Double latitude;
     private Double longitude;
 
-    @ManyToMany(mappedBy = "userAdressList",cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "userAddressList",cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<User> adressUserList;
+    private List<User> addressUserList;
 
-    @OneToMany(mappedBy = "adress", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "address", cascade = CascadeType.ALL)
     @JsonIgnore
-    private List<Mission> adressMissionsList;
+    private List<Mission> addressMissionsList;
 
 
 
     /// Constructeur
-    public Adress() {
+    public Address() {
     }
 
-    public Adress(Long adressId, String streetNumber, String streetName, String postalCode,
-                  String city, Double latitude, Double longitude, List<User> adressUserList, List<Mission> adressMissionsList) {
-        this.adressId = adressId;
+    public Address(Long addressId, String streetNumber, String streetName, String postalCode,
+                  String city, Double latitude, Double longitude, List<User> addressUserList, List<Mission> addressMissionsList) {
+        this.addressId = addressId;
         this.streetNumber = streetNumber;
         this.streetName = streetName;
         this.postalCode = postalCode;
         this.city = city;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.adressUserList = adressUserList;
-        this.adressMissionsList = adressMissionsList;
+        this.addressUserList = addressUserList;
+        this.addressMissionsList = addressMissionsList;
     }
 
     /// Getters
-    public Long getAdressId() {
-        return adressId;
+    public Long getAddressId() {
+        return addressId;
     }
 
     public String getStreetNumber() {
@@ -83,17 +83,17 @@ public class Adress {
         return longitude;
     }
 
-    public List<User> getAdressUserList() {
-        return adressUserList;
+    public List<User> getAddressUserList() {
+        return addressUserList;
     }
 
-    public List<Mission> getAdressMissionsList() {
-        return adressMissionsList;
+    public List<Mission> getAddressMissionsList() {
+        return addressMissionsList;
     }
 
     /// Setters
-    public void setAdressId(Long adressId) {
-        this.adressId = adressId;
+    public void setAddressId(Long addressId) {
+        this.addressId = addressId;
     }
 
     public void setStreetNumber(String streetNumber) {
@@ -120,19 +120,19 @@ public class Adress {
         this.longitude = longitude;
     }
 
-    public void setAdressUserList(List<User> adressUserList) {
-        this.adressUserList = adressUserList;
+    public void setAddressUserList(List<User> addressUserList) {
+        this.addressUserList = addressUserList;
     }
 
-    public void setAdressMissionsList(List<Mission> adressMissionsList) {
-        this.adressMissionsList = adressMissionsList;
+    public void setAddressMissionsList(List<Mission> addressMissionsList) {
+        this.addressMissionsList = addressMissionsList;
     }
 
     /// To string
     @Override
     public String toString() {
-        return "Adress{" +
-                "adress_id=" + adressId +
+        return "Address{" +
+                "address_id=" + addressId +
                 ", streetNumber=" + streetNumber +
                 ", streetName='" + streetName + '\'' +
                 ", postalCode='" + postalCode + '\'' +

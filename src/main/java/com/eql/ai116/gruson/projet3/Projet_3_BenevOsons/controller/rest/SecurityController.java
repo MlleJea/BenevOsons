@@ -1,5 +1,5 @@
 /**
- * SecurityRestController.java
+ * SecurityController.java
  * Contrôleur REST qui gère les opérations de sécurité de l'application.
  *
  * Ce contrôleur expose des endpoints permettant de:
@@ -31,10 +31,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@CrossOrigin(origins = "*")
 @RestController
+@CrossOrigin(origins = "${front.url}")
 @RequestMapping("api/rest/security")
-public class SecurityRestController {
+public class SecurityController {
 
     private static final Logger logger = LogManager.getLogger();
 

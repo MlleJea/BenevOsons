@@ -8,10 +8,27 @@ public class MissionSearchCriteriaDTO {
     private List<Long> skillTypeIds;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private Double userLatitude;
+    private Double userLongitude;
+    private Double radiusKm;
+
 
     // Getters & Setters
     public String getCity() { return city; }
     public void setCity(String city) { this.city = city; }
+
+
+    public Double getUserLatitude() {
+        return userLatitude;
+    }
+
+    public Double getUserLongitude() {
+        return userLongitude;
+    }
+
+    public Double getRadiusKm() {
+        return radiusKm;
+    }
 
     public List<Long> getSkillTypeIds() { return skillTypeIds; }
     public void setSkillTypeIds(List<Long> skillTypeIds) { this.skillTypeIds = skillTypeIds; }
@@ -22,4 +39,5 @@ public class MissionSearchCriteriaDTO {
     public LocalDateTime getEndDate() { return endDate; }
     public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }
 }
+
 

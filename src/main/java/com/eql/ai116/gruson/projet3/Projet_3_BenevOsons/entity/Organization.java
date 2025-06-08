@@ -31,7 +31,7 @@ public class Organization extends User {
 
     /// Getters
 
-    public String getrna() {
+    public String getRna() {
         return rna;
     }
 
@@ -45,7 +45,7 @@ public class Organization extends User {
 
     /// Setters
 
-    public void setrna(String rna) {
+    public void setRna(String rna) {
         this.rna = rna;
     }
     

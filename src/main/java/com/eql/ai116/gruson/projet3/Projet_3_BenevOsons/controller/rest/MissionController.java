@@ -1,5 +1,5 @@
 /**
- * MissionRestController.java
+ * MissionController.java
  * Contrôleur REST qui gère les opérations CRUD pour les missions des utilisateurs.
  *
  * Ce contrôleur expose des endpoints permettant de:
@@ -34,31 +34,37 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@CrossOrigin(origins = "${front.url}")
 @RestController
 @RequestMapping("api/rest/mission")
-@CrossOrigin(origins = "*")
-public class MissionRestController {
+public class MissionController {
 
     private static final Logger logger = LogManager.getLogger();
 
     private MissionsService missionsService;
 
-    /**
-     * Récupère toutes les missions d'un utilisateur spécifique.
-     *
-     * @param id Identifiant de l'utilisateur
-     * @return ResponseEntity contenant la liste des missions ou une erreur
-     */
-    @GetMapping("/displayMyMissions/{id}")
-    public ResponseEntity<Object> displayMyMissions(@PathVariable Long id){
+    @GetMapping("/displayOrganizationMissions/{orgId}")
+    public ResponseEntity<Object> displayOrganizationMissions(@PathVariable Long orgId) {
         try {
-            List<Mission> missions = missionsService.displayAllMissions(id);
+            List<Mission> missions = missionsService.displayAllMissionsForOrganization(orgId);
             return ResponseEntity.ok(missions);
         } catch (Exception e) {
-            logger.error("Erreur lors de l'affichage des missions pour l'utilisateur " + id, e);
+            logger.error("Erreur pour l'organisation " + orgId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur serveur");
         }
     }
+
+    @GetMapping("/displayVolunteerMissions/{volId}")
+    public ResponseEntity<Object> displayVolunteerMissions(@PathVariable Long volId) {
+        try {
+            List<Mission> missions = missionsService.displayAllMissionsForVolunteer(volId);
+            return ResponseEntity.ok(missions);
+        } catch (Exception e) {
+            logger.error("Erreur pour le bénévole " + volId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur serveur");
+        }
+    }
+
 
     /**
      * Ajoute une nouvelle mission pour un utilisateur spécifique.

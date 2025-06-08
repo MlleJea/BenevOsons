@@ -1,5 +1,5 @@
 /**
- * SpaceRestController.java
+ * SpaceController.java
  * Contrôleur REST qui gère les opérations de l'espace utilisateur.
  *
  * Ce contrôleur expose des endpoints permettant de:
@@ -36,10 +36,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-@CrossOrigin(origins = "*")
 @RestController
+@CrossOrigin(origins = "${front.url}")
 @RequestMapping("api/rest/space")
-public class SpaceRestController {
+public class SpaceController {
 
     private static final Logger logger = LogManager.getLogger();
 

@@ -1,6 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto;
 
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
 
 import java.time.LocalDate;
@@ -15,7 +15,7 @@ public class RegistrationDto {
     private String phoneNumber;
     private RoleName roleName;
     private String name;
-    private List<Adress> adressList;
+    private List<Address> addressList;
 
     ////// Volunteer
     private LocalDate birthDate;
@@ -30,10 +30,10 @@ public class RegistrationDto {
 
     ////// Volunteer
     // Add
-    public RegistrationDto(LocalDate birthDate, List<Adress> adressList, String name, RoleName roleName,
+    public RegistrationDto(LocalDate birthDate, List<Address> addressList, String name, RoleName roleName,
                            String phoneNumber, String confirmationPassword, String password, String email) {
         this.birthDate = birthDate;
-        this.adressList = adressList;
+        this.addressList = addressList;
         this.name = name;
         this.roleName = roleName;
         this.phoneNumber = phoneNumber;
@@ -45,25 +45,25 @@ public class RegistrationDto {
     ////// Organization
     // Add
     public RegistrationDto(String email, String password,
-                           String phoneNumber, RoleName roleName, String name, List<Adress> adressList, String rna) {
+                           String phoneNumber, RoleName roleName, String name, List<Address> addressList, String rna) {
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.roleName = roleName;
         this.name = name;
-        this.adressList = adressList;
+        this.addressList = addressList;
         this.rna = rna;
     }
 
     // Update
 
     public RegistrationDto(String password, String phoneNumber, String confirmationPassword, String name,
-                           List<Adress> adressList) {
+                           List<Address> addressList) {
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.confirmationPassword = confirmationPassword;
         this.name = name;
-        this.adressList = adressList;
+        this.addressList = addressList;
     }
 
     /// Getters
@@ -96,8 +96,8 @@ public class RegistrationDto {
         return birthDate;
     }
 
-    public List<Adress> getAdressList() {
-        return adressList;
+    public List<Address> getAddressList() {
+        return addressList;
     }
 
     public String getRna() {
@@ -134,8 +134,8 @@ public class RegistrationDto {
         this.birthDate = birthDate;
     }
 
-    public void setAdressList(List<Adress> adressList) {
-        this.adressList = adressList;
+    public void setAddressList(List<Address> addressList) {
+        this.addressList = addressList;
     }
 
     public void setRna(String rna) {

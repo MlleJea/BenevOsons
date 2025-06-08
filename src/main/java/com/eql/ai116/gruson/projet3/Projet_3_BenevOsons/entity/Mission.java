@@ -13,6 +13,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,9 +32,9 @@ public class Mission {
     private LocalDate publicationDate;
     private LocalDate publicationClosingDate;
 
-    @ManyToMany(mappedBy = "volunteerMissionList")
+    @OneToMany(mappedBy = "mission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    private List<Volunteer> missionVolunteerList;
+    private List<Application> applications;
 
     @ManyToMany(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinTable(name = "missions_skill_type",
@@ -51,8 +52,8 @@ public class Mission {
     private Organization organization;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "adress_id")
-    private Adress adress;
+    @JoinColumn(name = "address_id")
+    private Address address;
 
     @ManyToOne(cascade = {CascadeType.MERGE,CascadeType.PERSIST}, fetch = FetchType.EAGER)
     @JoinColumn(name = "period_id")
@@ -75,10 +76,9 @@ public class Mission {
         return description;
     }
 
-    public Integer getNbVolunteerSearch() {
+    public Integer getNumberVolunteerSearch() {
         return numberVolunteerSearch;
     }
-
     public LocalDate getPublicationDate() {
         return publicationDate;
     }
@@ -87,8 +87,8 @@ public class Mission {
         return publicationClosingDate;
     }
 
-    public List<Volunteer> getMissionVolunteerList() {
-        return missionVolunteerList;
+    public List<Application> getApplications() {
+        return applications;
     }
 
     public List<SkillTypes> getMissionSkillsTypeList() {
@@ -103,8 +103,8 @@ public class Mission {
         return missionNotificationsList;
     }
 
-    public Adress getAdress() {
-        return adress;
+    public Address getAddress() {
+        return address;
     }
 
     public Period getPeriod() {
@@ -124,10 +124,9 @@ public class Mission {
         this.description = description;
     }
 
-    public void setNbVolunteerSearch(Integer nbVolunteerSearch) {
-        this.numberVolunteerSearch = nbVolunteerSearch;
+    public void setNumberVolunteerSearch(Integer numberVolunteerSearch) {
+        this.numberVolunteerSearch = numberVolunteerSearch;
     }
-
     public void setPublicationDate(LocalDate publicationDate) {
         this.publicationDate = publicationDate;
     }
@@ -136,8 +135,8 @@ public class Mission {
         this.publicationClosingDate = publicationClosingDate;
     }
 
-    public void setMissionVolunteerList(List<Volunteer> missionVolunteerList) {
-        this.missionVolunteerList = missionVolunteerList;
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
     }
 
     public void setMissionSkillsTypeList(List<SkillTypes> missionSkillsTypeList) {
@@ -152,8 +151,8 @@ public class Mission {
         this.missionNotificationsList = missionNotificationsList;
     }
 
-    public void setAdress(Adress adress) {
-        this.adress = adress;
+    public void setAddress(Address address) {
+        this.address = address;
     }
 
     public void setPeriod(Period period) {

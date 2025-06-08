@@ -1,6 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Mission;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Period;
@@ -13,12 +13,11 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.MissionsS
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.net.UnknownServiceException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -31,14 +30,18 @@ public class MissionServiceImpl implements MissionsService {
 
     /// Attributs
     MissionRepository missionRepository;
-    AdressServiceImpl adressService;
+    AddressServiceImpl addressService;
     OrganizationRepository organizationRepository;
     SkillTypesRepository skillTypesRepository;
 
 
     @Override
-    public List<Mission> displayAllMissions(Long id) {
-         return missionRepository.findAll();
+    public List<Mission> displayAllMissionsForOrganization(Long organizationId) {
+         return missionRepository.findAllByOrganization_UserId(organizationId);
+    }
+    @Override
+    public List<Mission> displayAllMissionsForVolunteer(Long volunteerId) {
+        return missionRepository.findAllMissionsByVolunteerUserId(volunteerId);
     }
 
     @Transactional
@@ -47,10 +50,25 @@ public class MissionServiceImpl implements MissionsService {
 
         logger.info(mission);
 
+        Period period = mission.getPeriod();
+
+        if (period.getStartDate().isAfter(period.getEndDate())) {
+            throw new IllegalArgumentException("La date de début doit être antérieure à la date de fin.");
+        }
+
+        if (period.getStartDate().isBefore(LocalDateTime.now().plusHours(48))) {
+            throw new IllegalArgumentException("La date de début doit être au moins 48h après la date de publication.");
+        }
+
+        List<Mission> existingMissions = missionRepository.findAllByOrganization_UserId(id);
+        if (existingMissions != null && existingMissions.size() >= 10) {
+            throw new IllegalStateException("Une association ne peut pas avoir plus de 10 missions actives.");
+        }
+
         mission.setPublicationDate(LocalDate.now());
 
-        Adress treatedAdress = adressService.adressWithLatLon(mission.getAdress());
-        mission.setAdress(treatedAdress);
+        Address treatedAddress = addressService.addressWithLatLon(mission.getAddress());
+        mission.setAddress(treatedAddress);
 
         Optional<Organization> optionalOrg = organizationRepository.findById(id);
         Organization orga = optionalOrg.orElseThrow(() -> {
@@ -97,14 +115,15 @@ public class MissionServiceImpl implements MissionsService {
     }
 
     /// Setter
+
     @Autowired
     public void setMissionRepository(MissionRepository missionRepository) {
         this.missionRepository = missionRepository;
     }
 
     @Autowired
-    public void setAdressService(AdressServiceImpl adressService) {
-        this.adressService = adressService;
+    public void setAddressService(AddressServiceImpl addressService) {
+        this.addressService = addressService;
     }
 
     @Autowired

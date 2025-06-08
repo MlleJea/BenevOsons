@@ -1,19 +1,18 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity;
 
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 
 import java.time.LocalDate;
 import java.util.List;
 
 @Entity
-public class Volunteer extends User{
+public class Volunteer extends User {
 
     /// Attributs
     private LocalDate birthdate;
@@ -22,18 +21,14 @@ public class Volunteer extends User{
     @JsonIgnore
     private List<Skill> volunteerSkillsList;
 
-    @ManyToMany
+    @OneToMany(mappedBy = "volunteer", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JsonIgnore
-    @JoinTable(name = "volunteer_missions",
-            joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "mission_id")})
-    private List<Mission> volunteerMissionList;
+    private List<Application> applications;
 
 
     /// Constructor
     public Volunteer() {
     }
-
 
 
     /// Getters
@@ -47,14 +42,16 @@ public class Volunteer extends User{
         return volunteerSkillsList;
     }
 
-
-    public List<Mission> getVolunteerMissionList() {
-        return volunteerMissionList;
+    public List<Application> getApplications() {
+        return applications;
     }
 
 
     /// Setters
 
+    public void setApplications(List<Application> applications) {
+        this.applications = applications;
+    }
 
     public void setBirthdate(LocalDate birthdate) {
         this.birthdate = birthdate;
@@ -64,7 +61,4 @@ public class Volunteer extends User{
         this.volunteerSkillsList = volunteerSkillsList;
     }
 
-    public void setVolunteerMissionList(List<Mission> volunteerMissionList) {
-        this.volunteerMissionList = volunteerMissionList;
-    }
 }

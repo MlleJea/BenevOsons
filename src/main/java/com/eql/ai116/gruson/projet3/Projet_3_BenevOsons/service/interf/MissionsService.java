@@ -8,7 +8,9 @@ import java.util.List;
 
 public interface MissionsService {
 
-    List<Mission> displayAllMissions(Long id);
+    List<Mission> displayAllMissionsForOrganization(Long organizationId);
+    List<Mission> displayAllMissionsForVolunteer(Long volunteerId);
+
     Mission addMission(Long id, Mission mission) throws UserNotFoundException;
     Mission updateMission(Long id, Mission mission);
     void deleteMission(Long id, Long missionId);

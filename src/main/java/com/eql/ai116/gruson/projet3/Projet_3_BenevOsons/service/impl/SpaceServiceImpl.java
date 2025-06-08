@@ -1,6 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Skill;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.SkillTypes;
@@ -13,7 +13,7 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.ResourceNotFou
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SkillRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SkillTypesRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolonteerRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolunteerRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SpaceService;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -37,7 +37,7 @@ public class SpaceServiceImpl implements SpaceService {
     // Attributs
     private PasswordEncoder passwordEncoder;
     private UserRepository userRepository;
-    private VolonteerRepository volonteerRepository;
+    private VolunteerRepository volunteerRepository;
     private SkillTypesRepository skillTypesRepository;
     private SkillRepository skillRepository;
 
@@ -48,8 +48,8 @@ public class SpaceServiceImpl implements SpaceService {
         Optional<User> user = userRepository.findById(id);
         if (user.isPresent()) {
             User userToDisplay = user.get();
-            List<Adress> addresses = userRepository.findUserAdressesByUserId(id);
-            userToDisplay.setUserAdressList(addresses);
+            List<Address> adddresses = userRepository.findUserAddressesByUserId(id);
+            userToDisplay.setUserAddressList(adddresses);
             return userToDisplay;
         }
         throw new ResourceNotFoundException("Utilisateur non trouvé avec l'ID : " + id);
@@ -60,50 +60,56 @@ public class SpaceServiceImpl implements SpaceService {
     public String updateUser(Long id, RegistrationDto registrationDto) {
         logger.info("Début de la mise à jour de l'utilisateur avec l'ID : " + id);
 
+
         Optional<User> optionalUser = userRepository.findById(id);
         if (!optionalUser.isPresent()) {
             throw new ResourceNotFoundException("Utilisateur non trouvé avec l'ID : " + id);
-        }
+        } else {
+            User user = optionalUser.get();
 
-        User user = optionalUser.get();
-
-        if (registrationDto.getName() != null) {
-            user.setName(registrationDto.getName());
-        }
-
-        if (registrationDto.getPassword() != null) {
-            user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
-        }
-
-        if (registrationDto.getPhoneNumber() != null) {
-            user.setPhoneNumber(registrationDto.getPhoneNumber());
-        }
-
-        if (registrationDto.getAdressList() != null && !registrationDto.getAdressList().isEmpty()) {
-            user.setUserAdressList(registrationDto.getAdressList());
-        }
-
-        if (user instanceof Volunteer volunteer && registrationDto.getRoleName() == RoleName.VOLUNTEER) {
-            if (registrationDto.getBirthDate() != null) {
-                volunteer.setBirthdate(registrationDto.getBirthDate());
+            if ((registrationDto.getEmail() != null && !registrationDto.getEmail().equals(user.getEmail())) ||
+                    (registrationDto.getRoleName() != null && !registrationDto.getRoleName().name().equals(user.getRole().getRoleName()))) {
+                throw new IllegalStateException("L'email et le rôle ne sont pas modifiables.");
             }
-        }
 
-        if (user instanceof Organization organization && registrationDto.getRoleName() == RoleName.ORGANIZATION) {
-            if (registrationDto.getRna() != null) {
-                organization.setrna(registrationDto.getRna());
+            if (registrationDto.getName() != null) {
+                user.setName(registrationDto.getName());
             }
-        }
-        userRepository.save(user);
 
-        logger.info("Mise à jour réussie de l'utilisateur avec l'ID : " + id);
-        return "Mise à jour effectuée avec succès.";
+            if (registrationDto.getPassword() != null) {
+                user.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
+            }
+
+            if (registrationDto.getPhoneNumber() != null) {
+                user.setPhoneNumber(registrationDto.getPhoneNumber());
+            }
+
+            if (registrationDto.getAddressList() != null && !registrationDto.getAddressList().isEmpty()) {
+                user.setUserAddressList(registrationDto.getAddressList());
+            }
+
+            if (user instanceof Volunteer volunteer && registrationDto.getRoleName() == RoleName.VOLUNTEER) {
+                if (registrationDto.getBirthDate() != null) {
+                    volunteer.setBirthdate(registrationDto.getBirthDate());
+                }
+            }
+
+            if (user instanceof Organization organization && registrationDto.getRoleName() == RoleName.ORGANIZATION) {
+                if (registrationDto.getRna() != null) {
+                    organization.setRna(registrationDto.getRna());
+                }
+            }
+            userRepository.save(user);
+
+            logger.info("Mise à jour réussie de l'utilisateur avec l'ID : " + id);
+            return "Mise à jour effectuée avec succès.";
+        }
     }
 
     /// SKILLS
     @Override
     public List<Skill> displaySkill(Long id) {
-        List<Skill> skills = volonteerRepository.findUserSkillsByUserId(id);
+        List<Skill> skills = volunteerRepository.findUserSkillsByUserId(id);
         if (skills.isEmpty()) {
             throw new ResourceNotFoundException("Aucune compétence trouvée pour l'utilisateur avec l'ID : " + id);
         }
@@ -139,7 +145,7 @@ public class SpaceServiceImpl implements SpaceService {
         List<Volunteer> skillsVolunteers = new ArrayList<>();
         skill.setSkillsVolunteerList(skillsVolunteers);
 
-        Optional<Volunteer> volunteer = volonteerRepository.findById(id);
+        Optional<Volunteer> volunteer = volunteerRepository.findById(id);
         if (volunteer.isPresent()) {
             Volunteer vol = volunteer.get();
             skill.getSkillsVolunteerList().add(vol);
@@ -176,7 +182,7 @@ public class SpaceServiceImpl implements SpaceService {
         }
         skillToUpdate.setSkillType(skillType);
 
-        Optional<Volunteer> optionalVolunteer = volonteerRepository.findById(skillDto.getVolunteerId());
+        Optional<Volunteer> optionalVolunteer = volunteerRepository.findById(skillDto.getVolunteerId());
         if (!optionalVolunteer.isPresent()) {
             throw new ResourceNotFoundException("Volontaire non trouvé avec l'ID : " + skillDto.getVolunteerId());
         }
@@ -211,8 +217,8 @@ public class SpaceServiceImpl implements SpaceService {
     }
 
     @Autowired
-    public void setVolonteerRepository(VolonteerRepository volonteerRepository) {
-        this.volonteerRepository = volonteerRepository;
+    public void setVolunteerRepository(VolunteerRepository volunteerRepository) {
+        this.volunteerRepository = volunteerRepository;
     }
 
     @Autowired

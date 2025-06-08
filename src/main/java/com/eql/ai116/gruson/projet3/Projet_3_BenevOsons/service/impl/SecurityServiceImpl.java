@@ -1,6 +1,6 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Adress;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Organization;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.User;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Volunteer;
@@ -13,13 +13,13 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.Authentication
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.EmailAlreadyExistsException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.PasswordDontMatchException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.RegistrationFailedException;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AdressRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AddressRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.OrganizationRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.RoleRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolonteerRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.VolunteerRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.security.JwtUtilities;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AdressService;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AddressService;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SecurityService;
 import jakarta.transaction.Transactional;
 import org.apache.logging.log4j.LogManager;
@@ -46,10 +46,10 @@ public class SecurityServiceImpl implements SecurityService {
     /// Attributs
     private UserRepository userRepository;
     private RoleRepository roleRepository;
-    private VolonteerRepository volonteerRepository;
+    private VolunteerRepository volunteerRepository;
     private OrganizationRepository organizationRepository;
-    private AdressService adressService;
-    private AdressRepository adressRepository;
+    private AddressService addressService;
+    private AddressRepository addressRepository;
 
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
@@ -70,9 +70,9 @@ public class SecurityServiceImpl implements SecurityService {
                 throw new PasswordDontMatchException("Les mots de passe ne correspondent pas");
             }
 
-            // Adress treatment
-            List<Adress> adresses = registrationDto.getAdressList();
-            processAddresses(adresses);
+            // Address treatment
+            List<Address> addresses = registrationDto.getAddressList();
+            processaddresses(addresses);
 
             // Role treatment
             Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
@@ -81,9 +81,9 @@ public class SecurityServiceImpl implements SecurityService {
             }
 
             if (registrationDto.getRoleName().equals(RoleName.VOLUNTEER)) {
-                saveVolunteer(registrationDto, adresses, role);
+                saveVolunteer(registrationDto, addresses, role);
             } else if (registrationDto.getRoleName().equals(RoleName.ORGANIZATION)) {
-                saveOrganization(registrationDto, adresses, role);
+                saveOrganization(registrationDto, addresses, role);
             } else {
                 throw new RegistrationFailedException("Type de rôle non pris en charge: " + registrationDto.getRoleName(), null);
             }
@@ -105,44 +105,44 @@ public class SecurityServiceImpl implements SecurityService {
         }
     }
 
-    private void processAddresses(List<Adress> adresses) {
-        for (Adress adress : adresses) {
-            Adress adressWithLatLon = adressService.adressWithLatLon(adress);
-            Optional<Adress> adressIsAlreadyExisting = adressRepository.findByLatitudeAndLongitude(
-                    adressWithLatLon.getLatitude(), adressWithLatLon.getLongitude());
-            if (adressIsAlreadyExisting.isEmpty()) {
-                adressRepository.save(adressWithLatLon);
+    private void processaddresses(List<Address> addresses) {
+        for (Address address : addresses) {
+            Address addressWithLatLon = addressService.addressWithLatLon(address);
+            Optional<Address> addressIsAlreadyExisting = addressRepository.findByLatitudeAndLongitude(
+                    addressWithLatLon.getLatitude(), addressWithLatLon.getLongitude());
+            if (addressIsAlreadyExisting.isEmpty()) {
+                addressRepository.save(addressWithLatLon);
             } else {
-                adress.setAdressId(adressIsAlreadyExisting.get().getAdressId());
+                address.setAddressId(addressIsAlreadyExisting.get().getAddressId());
             }
         }
     }
 
-    private void saveVolunteer(RegistrationDto registrationDto, List<Adress> adresses, Role role) {
+    private void saveVolunteer(RegistrationDto registrationDto, List<Address> addresses, Role role) {
         Volunteer volunteer = new Volunteer();
         volunteer.setEmail(registrationDto.getEmail());
         volunteer.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         volunteer.setPhoneNumber(registrationDto.getPhoneNumber());
         volunteer.setName(registrationDto.getName());
-        volunteer.setUserAdressList(adresses);
+        volunteer.setUserAddressList(addresses);
         volunteer.setRegistrationDate(LocalDate.now());
         volunteer.setRole(role);
         volunteer.setBirthdate(registrationDto.getBirthDate());
 
         logger.info("Enregistrement du bénévole : " + volunteer);
-        volonteerRepository.save(volunteer);
+        volunteerRepository.save(volunteer);
     }
 
-    private void saveOrganization(RegistrationDto registrationDto, List<Adress> adresses, Role role) {
+    private void saveOrganization(RegistrationDto registrationDto, List<Address> addresses, Role role) {
         Organization organization = new Organization();
         organization.setEmail(registrationDto.getEmail());
         organization.setPassword(passwordEncoder.encode(registrationDto.getPassword()));
         organization.setPhoneNumber(registrationDto.getPhoneNumber());
         organization.setName(registrationDto.getName());
-        organization.setUserAdressList(adresses);
+        organization.setUserAddressList(addresses);
         organization.setRegistrationDate(LocalDate.now());
         organization.setRole(role);
-        organization.setrna(registrationDto.getRna());
+        organization.setRna(registrationDto.getRna());
 
         logger.info("Enregistrement de l'organisation : " + organization);
         organizationRepository.save(organization);
@@ -203,8 +203,8 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Autowired
-    public void setVolonteerRepository(VolonteerRepository volonteerRepository) {
-        this.volonteerRepository = volonteerRepository;
+    public void setvolunteerRepository(VolunteerRepository volunteerRepository) {
+        this.volunteerRepository = volunteerRepository;
     }
 
     @Autowired
@@ -223,12 +223,12 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Autowired
-    public void setAdressRepository(AdressRepository adressRepository) {
-        this.adressRepository = adressRepository;
+    public void setAddressRepository(AddressRepository addressRepository) {
+        this.addressRepository = addressRepository;
     }
 
     @Autowired
-    public void setAdressService(AdressService adressService) {
-        this.adressService = adressService;
+    public void setAddressService(AddressService addressService) {
+        this.addressService = addressService;
     }
 }

@@ -27,8 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "${front.url}")
 @RequestMapping("api/rest/referentiel")
-@CrossOrigin(origins = "*")
 public class ReferentielController {
 
     private static final Logger logger = LogManager.getLogger();

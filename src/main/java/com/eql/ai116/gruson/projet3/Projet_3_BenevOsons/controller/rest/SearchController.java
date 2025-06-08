@@ -29,8 +29,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 
 @RestController
+@CrossOrigin(origins = "${front.url}")
 @RequestMapping("/api/rest/search")
-@CrossOrigin(origins = "*")
 public class SearchController {
 
     private Logger logger = LogManager.getLogger();

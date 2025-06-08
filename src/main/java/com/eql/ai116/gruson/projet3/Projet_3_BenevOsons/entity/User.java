@@ -20,7 +20,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
- * A user of the application, either a volonteer or an organization
+ * A user of the application, either a volunteer or an organization
  */
 @Entity
 @Inheritance(strategy = InheritanceType.JOINED)
@@ -39,10 +39,10 @@ public class User {
 
     // Link to other tables
     @ManyToMany
-    @JoinTable(name = "user_adress",
+    @JoinTable(name = "user_address",
             joinColumns = {@JoinColumn(name = "user_id")},
-            inverseJoinColumns = {@JoinColumn(name = "adress_id")})
-    private List<Adress> userAdressList;
+            inverseJoinColumns = {@JoinColumn(name = "address_id")})
+    private List<Address> userAddressList;
 
     @ManyToMany
     @JsonIgnore
@@ -60,19 +60,19 @@ public class User {
     }
 
     public User(Long userId, String email, String password, LocalDate registrationDate, String name, Role role,
-                List<Adress> userAdressList, String phoneNumber) {
+                List<Address> userAddressList, String phoneNumber) {
         this.userId = userId;
         this.email = email;
         this.password = password;
         this.registrationDate = registrationDate;
         this.name = name;
         this.role = role;
-        this.userAdressList = userAdressList;
+        this.userAddressList = userAddressList;
         this.phoneNumber = phoneNumber;
     }
 
     public User(Long userId, String email, String password, LocalDate registrationDate, LocalDate unRegistrationDate,
-                String name, String phoneNumber, List<Adress> userAdressList, List<Notification> userNotificationList,
+                String name, String phoneNumber, List<Address> userAddressList, List<Notification> userNotificationList,
                 Role role) {
         this.userId = userId;
         this.email = email;
@@ -81,7 +81,7 @@ public class User {
         this.unRegistrationDate = unRegistrationDate;
         this.name = name;
         this.phoneNumber = phoneNumber;
-        this.userAdressList = userAdressList;
+        this.userAddressList = userAddressList;
         this.userNotificationList = userNotificationList;
         this.role = role;
     }
@@ -115,8 +115,8 @@ public class User {
         return phoneNumber;
     }
 
-    public List<Adress> getUserAdressList() {
-        return userAdressList;
+    public List<Address> getUserAddressList() {
+        return userAddressList;
     }
 
     public List<Notification> getUserNotificationList() {
@@ -156,8 +156,8 @@ public class User {
         this.phoneNumber = phoneNumber;
     }
 
-    public void setUserAdressList(List<Adress> userAdressList) {
-        this.userAdressList = userAdressList;
+    public void setUserAddressList(List<Address> userAddressList) {
+        this.userAddressList = userAddressList;
     }
 
     public void setUserNotificationList(List<Notification> userNotificationList) {
