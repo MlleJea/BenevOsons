@@ -36,22 +36,21 @@ public interface SearchRepository extends JpaRepository<Mission, Long> {
      * @param city         Le nom de la ville à rechercher (peut être null pour ignorer ce filtre).
      *                     La recherche est insensible à la casse et utilise une correspondance partielle.
      * @param skillTypeIds Liste des identifiants des types de compétences requis
-     *                     (peut être null pour ignorer ce filtre)
+     *                     (peut être null ou vide pour ignorer ce filtre)
      * @param startDate    Date de début minimum pour filtrer les missions
      *                     (peut être null pour ignorer ce filtre)
      * @param endDate      Date de fin maximum pour filtrer les missions
      *                     (peut être null pour ignorer ce filtre)
      * @return Liste des missions correspondantes aux critères de recherche.
      * Retourne une liste vide si aucune mission ne correspond.
-     * Retourne une liste vide si aucune mission ne correspond.
      */
     @Query("""
                 SELECT DISTINCT m FROM Mission m
                 JOIN m.missionSkillsTypeList st
-                WHERE (:city IS NULL OR LOWER(m.address.city) LIKE LOWER(CONCAT('%', :city, '%')))
-                  AND (:skillTypeIds IS NULL OR st.idSkillType IN :skillTypeIds)
-                  AND (:startDate IS NULL OR m.period.startDate >= :startDate)
-                  AND (:endDate IS NULL OR m.period.endDate <= :endDate)
+                WHERE (:city IS NULL OR TRIM(:city) = '' OR LOWER(m.address.city) LIKE LOWER(CONCAT('%', :city, '%')))
+                  AND (:#{#skillTypeIds.empty} = true OR st.idSkillType IN :skillTypeIds)
+                  AND (:startDate IS NULL OR m.period.endDate >= :startDate)
+                  AND (:endDate IS NULL OR m.period.startDate <= :endDate)
                   AND (m.period.startDate >= CURRENT_TIMESTAMP OR (m.period.startDate <= CURRENT_TIMESTAMP AND m.period.endDate >= CURRENT_TIMESTAMP))
             """)
     List<Mission> findMissionsWithFilters(

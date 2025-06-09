@@ -82,13 +82,13 @@ public class SpringSecurityConfig {
 
                             // Accès public
                             .requestMatchers("/api/rest/security/**").permitAll()
-                            .requestMatchers("/api/rest/space/**").permitAll()
+                            .requestMatchers("/api/rest/referentiel/**").permitAll()
 
                             // VOLUNTEER uniquement
                             .requestMatchers("/api/rest/search/**").hasAuthority("VOLUNTEER")
 
                             // VOLUNTEER et ORGANIZATION
-                            .requestMatchers("/api/rest/profil/**").hasAnyAuthority("VOLUNTEER", "ORGANIZATION")
+                            .requestMatchers("/api/rest/space/**").hasAnyAuthority("VOLUNTEER", "ORGANIZATION")
                             .requestMatchers("/api/rest/mission/**").hasAnyAuthority("VOLUNTEER", "ORGANIZATION")
 
                             // Tout le reste doit être authentifié
