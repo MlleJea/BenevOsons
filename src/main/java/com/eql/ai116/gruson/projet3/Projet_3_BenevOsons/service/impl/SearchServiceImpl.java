@@ -1,8 +1,11 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Mission;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.MissionSearchCriteriaDTO;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.ResourceNotFoundException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SearchRepository;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AddressService;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SearchService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +19,7 @@ public class SearchServiceImpl implements SearchService {
 
     SearchRepository searchRepository;
     AddressService addressService;
+    UserRepository userRepository;
 
     @Override
     public List<Mission> searchMissionsWithFilters(MissionSearchCriteriaDTO criteria) {
@@ -50,7 +54,15 @@ public class SearchServiceImpl implements SearchService {
         }
 
         return missions;
+    }
 
+    @Override
+    public List<Address> getVolunteerAddresses(Long id){
+        List<Address> addresses = userRepository.findUserAddressesByUserId(id);
+        if(addresses.isEmpty()){
+            throw  new ResourceNotFoundException("Aucune adresse trouvée pour l'utilisateur avec l'ID : " +id);
+        }
+        return addresses;
     }
 
     ///  Setter
@@ -64,4 +76,8 @@ public class SearchServiceImpl implements SearchService {
         this.addressService = addressService;
     }
 
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 }

@@ -11,6 +11,7 @@
 
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Mission;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.MissionSearchCriteriaDTO;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.ResourceNotFoundException;
@@ -21,6 +22,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -58,6 +61,21 @@ public class SearchController {
             logger.error("Erreur lors de la recherche avec filtres", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la recherche.");
         }
+    }
+
+    @GetMapping("/address/{id}")
+    public ResponseEntity<Object> getVolunteerAdress(@PathVariable Long id){
+        try {
+            List<Address> addresses = searchService.getVolunteerAddresses(id);
+            return ResponseEntity.ok(addresses);
+        } catch (ResourceNotFoundException e ){
+            logger.warn("Adresses non trouvées pour l'utilisateur avec l'ID : {}", id, e);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        } catch (Exception e){
+            logger.error("Erreur lors de l'affichage des adresses de l'utilisateur avec l'ID : {}", id, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
+        }
+
     }
 
     @Autowired
