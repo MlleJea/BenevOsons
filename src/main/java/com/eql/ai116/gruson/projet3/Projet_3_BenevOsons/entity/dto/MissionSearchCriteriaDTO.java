@@ -4,7 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public class MissionSearchCriteriaDTO {
-    private String city;
+    private String postalCode;
     private List<Long> skillTypeIds;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
@@ -14,9 +14,11 @@ public class MissionSearchCriteriaDTO {
 
 
     // Getters & Setters
-    public String getCity() { return city; }
-    public void setCity(String city) { this.city = city; }
 
+
+    public String getPostalCode() {
+        return postalCode;
+    }
 
     public Double getUserLatitude() {
         return userLatitude;

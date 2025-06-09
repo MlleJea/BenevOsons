@@ -24,32 +24,40 @@ public class SearchServiceImpl implements SearchService {
     @Override
     public List<Mission> searchMissionsWithFilters(MissionSearchCriteriaDTO criteria) {
         List<Mission> missions = searchRepository.findMissionsWithFilters(
-                criteria.getCity(),
+                criteria.getPostalCode(),
                 criteria.getSkillTypeIds(),
                 criteria.getStartDate(),
                 criteria.getEndDate()
         );
-        if (criteria.getUserLatitude() != null &&
-                criteria.getUserLongitude() != null &&
-                criteria.getRadiusKm() != null) {
+
+        Double searchLat = criteria.getUserLatitude();
+        Double searchLon = criteria.getUserLongitude();
+
+        if ((searchLat == null || searchLon == null) && criteria.getPostalCode() != null && criteria.getRadiusKm() != null) {
+            Address center = addressService.cityWithLatLon(criteria.getPostalCode());
+            searchLat = center.getLatitude();
+            searchLon = center.getLongitude();
+        }
+
+        if (searchLat != null && searchLon != null && criteria.getRadiusKm() != null) {
+            final double lat = searchLat;
+            final double lon = searchLon;
 
             missions = missions.stream()
                     .filter(mission -> {
-                        if (mission.getAddress().getLatitude() == null || mission.getAddress().getLongitude() == null) {
+                        Address missionAddress = mission.getAddress();
+                        if (missionAddress == null || missionAddress.getLatitude() == null || missionAddress.getLongitude() == null) {
                             return false;
                         }
-                        double distance = addressService.haversine(criteria.getUserLatitude(),
-                                criteria.getUserLongitude(),
-                                mission.getAddress().getLatitude(),
-                                mission.getAddress().getLongitude());
+                        double distance = addressService.haversine(lat, lon,
+                                missionAddress.getLatitude(), missionAddress.getLongitude());
                         return distance <= criteria.getRadiusKm();
                     })
-                    .sorted(Comparator.comparingDouble(mission ->
-                            addressService.haversine(
-                                    criteria.getUserLatitude(),
-                                    criteria.getUserLongitude(),
-                                    mission.getAddress().getLatitude(),
-                                    mission.getAddress().getLongitude())))
+                    .sorted(Comparator.comparingDouble(mission -> {
+                        Address missionAddress = mission.getAddress();
+                        return addressService.haversine(lat, lon,
+                                missionAddress.getLatitude(), missionAddress.getLongitude());
+                    }))
                     .toList();
         }
 

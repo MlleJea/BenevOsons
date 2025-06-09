@@ -8,10 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
 @Service
 public class AddressServiceImpl implements AddressService {
 
-    private static final String API_URL = "https://api-addresse.data.gouv.fr/search/?q=";
+    private static final String API_URL = "https://api-adresse.data.gouv.fr/search/?q=";
     private static final int EARTH_RADIUS_KM = 6371;
 
     Logger logger = LogManager.getLogger();
@@ -22,6 +23,29 @@ public class AddressServiceImpl implements AddressService {
     }
 
     @Override
+    public Address cityWithLatLon(String postalCode){
+
+        Address address = new Address();
+        String url = API_URL + postalCode;
+        RestTemplate restTemplate = new RestTemplate();
+
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+
+            String geoJSON = response.getBody();
+            Double latitude = extractLatitude(geoJSON);
+            Double longitude = extractLongitude(geoJSON);
+
+            address.setLatitude(latitude);
+            address.setLongitude(longitude);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la récupération des coordonnées pour le code postal " + postalCode, e);
+        }
+
+        return address;
+    }
+
+    @Override
     public Address addressWithLatLon(Address address) {
 
         String addressToString = formatAddress(address);
@@ -29,16 +53,16 @@ public class AddressServiceImpl implements AddressService {
         RestTemplate restTemplate = new RestTemplate();
 
         try {
-            ResponseEntity<String> reponse = restTemplate.getForEntity(url, String.class);
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
 
-            String geoJSON = reponse.getBody();
+            String geoJSON = response.getBody();
             Double latitude = extractLatitude(geoJSON);
             Double longitude = extractLongitude(geoJSON);
 
             address.setLatitude(latitude);
             address.setLongitude(longitude);
         } catch (Exception e) {
-            logger.info("Impossible d'accéder à l'addresse "+ addressToString);
+            logger.info("Impossible d'accéder à l'adresse "+ addressToString);
         }
         return address;
     }
