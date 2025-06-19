@@ -43,9 +43,8 @@ public class SpringSecurityConfig {
                         .requestMatchers("/api/rest/search/**").permitAll()
                         //.requestMatchers("/api/rest/space/**").hasAnyAuthority("ORGANIZATION","VOLUNTEER")
                         .requestMatchers("/api/rest/referentiel/**").permitAll()
-                        .requestMatchers("/api/rest/mission/**").hasAuthority("ORGANIZATION")
-                        //.requestMatchers("/api/rest/glossary/**").permitAll()
-                        // .requestMatchers("/api/rest/admin/**").hasAuthority("ADMIN")
+                        .requestMatchers("/api/rest/mission/**").authenticated()
+                        .requestMatchers("/api/rest/admin/**").hasAuthority("ADMIN")
                         .anyRequest().authenticated() // Tout le reste nécessite une authentification
                 );
 
