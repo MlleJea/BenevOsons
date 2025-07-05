@@ -8,6 +8,8 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.SearchReposit
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.UserRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AddressService;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SearchService;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -17,21 +19,20 @@ import java.util.List;
 @Service
 public class SearchServiceImpl implements SearchService {
 
-    SearchRepository searchRepository;
-    AddressService addressService;
-    UserRepository userRepository;
+    private Logger logger = LogManager.getLogger();
+
+    private SearchRepository searchRepository;
+    private AddressService addressService;
+    private UserRepository userRepository;
 
     @Override
     public List<Mission> searchMissionsWithFilters(MissionSearchCriteriaDTO criteria) {
-        List<Mission> missions = searchRepository.findMissionsWithFilters(
-                criteria.getPostalCode(),
-                criteria.getSkillTypeIds(),
-                criteria.getStartDate(),
-                criteria.getEndDate()
-        );
+
+        List<Mission> missions = searchRepository.findMissionsWithFilters(null, criteria.getSkillTypeIds(), criteria.getStartDate(), criteria.getEndDate());
 
         Double searchLat = criteria.getUserLatitude();
         Double searchLon = criteria.getUserLongitude();
+
 
         if ((searchLat == null || searchLon == null) && criteria.getPostalCode() != null && criteria.getRadiusKm() != null) {
             Address center = addressService.cityWithLatLon(criteria.getPostalCode());
@@ -39,36 +40,33 @@ public class SearchServiceImpl implements SearchService {
             searchLon = center.getLongitude();
         }
 
+
         if (searchLat != null && searchLon != null && criteria.getRadiusKm() != null) {
             final double lat = searchLat;
             final double lon = searchLon;
 
-            missions = missions.stream()
-                    .filter(mission -> {
-                        Address missionAddress = mission.getAddress();
-                        if (missionAddress == null || missionAddress.getLatitude() == null || missionAddress.getLongitude() == null) {
-                            return false;
-                        }
-                        double distance = addressService.haversine(lat, lon,
-                                missionAddress.getLatitude(), missionAddress.getLongitude());
-                        return distance <= criteria.getRadiusKm();
-                    })
-                    .sorted(Comparator.comparingDouble(mission -> {
-                        Address missionAddress = mission.getAddress();
-                        return addressService.haversine(lat, lon,
-                                missionAddress.getLatitude(), missionAddress.getLongitude());
-                    }))
-                    .toList();
+            missions = missions.stream().filter(mission -> {
+                Address missionAddress = mission.getAddress();
+                if (missionAddress == null || missionAddress.getLatitude() == null || missionAddress.getLongitude() == null) {
+                    return false;
+                }
+                double distance = addressService.haversine(lat, lon, missionAddress.getLatitude(), missionAddress.getLongitude());
+                return distance <= criteria.getRadiusKm();
+            }).sorted(Comparator.comparingDouble(mission -> {
+                Address missionAddress = mission.getAddress();
+                return addressService.haversine(lat, lon, missionAddress.getLatitude(), missionAddress.getLongitude());
+            })).toList();
         }
 
+        logger.info("Recherche terminée. {} mission(s) trouvée(s)", missions.size());
         return missions;
     }
 
     @Override
-    public List<Address> getVolunteerAddresses(Long id){
+    public List<Address> getVolunteerAddresses(Long id) {
         List<Address> addresses = userRepository.findUserAddressesByUserId(id);
-        if(addresses.isEmpty()){
-            throw  new ResourceNotFoundException("Aucune adresse trouvée pour l'utilisateur avec l'ID : " +id);
+        if (addresses.isEmpty()) {
+            throw new ResourceNotFoundException("Aucune adresse trouvée pour l'utilisateur avec l'ID : " + id);
         }
         return addresses;
     }

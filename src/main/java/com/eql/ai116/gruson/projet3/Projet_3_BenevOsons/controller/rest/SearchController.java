@@ -1,14 +1,3 @@
-/**
- * SearchController.java
- * Contrôleur REST qui gère les opérations de recherche de missions.
- *
- * Ce contrôleur expose des endpoints permettant de:
- *  Rechercher des missions en fonction de critères spécifiques
- *
- * @author Jeanne GRUSON
- * @version 1.0
- */
-
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
@@ -31,6 +20,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+/**
+ * SearchController.java
+ * Contrôleur REST qui gère les opérations de recherche de missions.
+ *
+ * Ce contrôleur expose des endpoints permettant de:
+ *  Rechercher des missions en fonction de critères spécifiques
+ *
+ * @author Jeanne GRUSON
+ * @version 1.0
+ */
 @RestController
 @CrossOrigin(origins = "${front.url}")
 @RequestMapping("/api/rest/search")
@@ -48,6 +47,7 @@ public class SearchController {
      */
     @PostMapping("/filter")
     public ResponseEntity<Object> searchWithFilters(@RequestBody MissionSearchCriteriaDTO criteria) {
+        logger.info("Recherche de missions avec critères");
         try {
             List<Mission> missions = searchService.searchMissionsWithFilters(criteria);
             if (missions.isEmpty()) {
@@ -55,27 +55,27 @@ public class SearchController {
             }
             return ResponseEntity.ok(missions);
         } catch (ResourceNotFoundException e) {
-            logger.warn("Recherche sans résultat : " + e.getMessage());
+            logger.warn("Aucun résultat trouvé: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         } catch (Exception e) {
-            logger.error("Erreur lors de la recherche avec filtres", e);
+            logger.error("Erreur lors de la recherche: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de la recherche.");
         }
     }
 
     @GetMapping("/address/{id}")
     public ResponseEntity<Object> getVolunteerAdress(@PathVariable Long id){
+        logger.info("Récupération des adresses pour l'utilisateur: {}", id);
         try {
             List<Address> addresses = searchService.getVolunteerAddresses(id);
             return ResponseEntity.ok(addresses);
-        } catch (ResourceNotFoundException e ){
-            logger.warn("Adresses non trouvées pour l'utilisateur avec l'ID : {}", id, e);
+        } catch (ResourceNotFoundException e) {
+            logger.warn("Adresses non trouvées pour l'utilisateur {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        } catch (Exception e){
-            logger.error("Erreur lors de l'affichage des adresses de l'utilisateur avec l'ID : {}", id, e);
+        } catch (Exception e) {
+            logger.error("Erreur lors de la récupération des adresses pour l'utilisateur {}: {}", id, e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(e.getMessage());
         }
-
     }
 
     @Autowired

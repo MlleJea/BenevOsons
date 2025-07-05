@@ -2,7 +2,6 @@ package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.unity.controller;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.controller.rest.MissionController;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Mission;
-import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.UserNotFoundException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.MissionsService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -11,7 +10,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
