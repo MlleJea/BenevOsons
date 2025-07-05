@@ -1,12 +1,17 @@
 package com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.impl;
 
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.Address;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AddressRepository;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.AddressService;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -17,11 +22,28 @@ public class AddressServiceImpl implements AddressService {
 
     Logger logger = LogManager.getLogger();
 
+    @Autowired
+    private AddressRepository addressRepository;
+
+
     @Override
     public String formatAddress(Address address) {
         return address.getStreetNumber() + "+" + address.getStreetName() + "&postcode=" + address.getPostalCode();
     }
 
+    @Override
+    public void processAddress(List<Address> addresses) {
+        for (Address address : addresses) {
+            Address addressWithLatLon = addressWithLatLon(address);
+            Optional<Address> addressIsAlreadyExisting = addressRepository.findFirstByLatitudeAndLongitude(
+                    addressWithLatLon.getLatitude(), addressWithLatLon.getLongitude());
+            if (addressIsAlreadyExisting.isEmpty()) {
+                addressRepository.save(addressWithLatLon);
+            } else {
+                address.setAddressId(addressIsAlreadyExisting.get().getAddressId());
+            }
+        }
+    }
     @Override
     public Address cityWithLatLon(String postalCode){
 

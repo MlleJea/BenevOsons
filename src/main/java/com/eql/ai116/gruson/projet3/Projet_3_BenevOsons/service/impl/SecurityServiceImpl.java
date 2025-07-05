@@ -49,7 +49,6 @@ public class SecurityServiceImpl implements SecurityService {
     private VolunteerRepository volunteerRepository;
     private OrganizationRepository organizationRepository;
     private AddressService addressService;
-    private AddressRepository addressRepository;
 
     private PasswordEncoder passwordEncoder;
     private AuthenticationManager authenticationManager;
@@ -72,7 +71,7 @@ public class SecurityServiceImpl implements SecurityService {
 
             // Address treatment
             List<Address> addresses = registrationDto.getAddressList();
-            processaddresses(addresses);
+            addressService.processAddress(addresses);
 
             // Role treatment
             Role role = roleRepository.findByRoleName(registrationDto.getRoleName());
@@ -105,18 +104,7 @@ public class SecurityServiceImpl implements SecurityService {
         }
     }
 
-    private void processaddresses(List<Address> addresses) {
-        for (Address address : addresses) {
-            Address addressWithLatLon = addressService.addressWithLatLon(address);
-            Optional<Address> addressIsAlreadyExisting = addressRepository.findByLatitudeAndLongitude(
-                    addressWithLatLon.getLatitude(), addressWithLatLon.getLongitude());
-            if (addressIsAlreadyExisting.isEmpty()) {
-                addressRepository.save(addressWithLatLon);
-            } else {
-                address.setAddressId(addressIsAlreadyExisting.get().getAddressId());
-            }
-        }
-    }
+
 
     private void saveVolunteer(RegistrationDto registrationDto, List<Address> addresses, Role role) {
         Volunteer volunteer = new Volunteer();
@@ -220,11 +208,6 @@ public class SecurityServiceImpl implements SecurityService {
     @Autowired
     public void setJwtUtilities(JwtUtilities jwtUtilities) {
         this.jwtUtilities = jwtUtilities;
-    }
-
-    @Autowired
-    public void setAddressRepository(AddressRepository addressRepository) {
-        this.addressRepository = addressRepository;
     }
 
     @Autowired
