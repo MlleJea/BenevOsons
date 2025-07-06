@@ -11,6 +11,8 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.Role;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.security.RoleName;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.AuthenticationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.EmailAlreadyExistsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.InvalidCredentialsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.InvalidPasswordException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.PasswordDontMatchException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.RegistrationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.repository.AddressRepository;
@@ -56,7 +58,7 @@ public class SecurityServiceImpl implements SecurityService {
 
     @Transactional
     @Override
-    public UserDto register(RegistrationDto registrationDto) throws EmailAlreadyExistsException, RegistrationFailedException {
+    public UserDto register(RegistrationDto registrationDto) throws EmailAlreadyExistsException, RegistrationFailedException, PasswordDontMatchException, InvalidPasswordException {
         logger.info("Début de l'inscription pour : " + registrationDto.getEmail());
 
         try {
@@ -68,6 +70,8 @@ public class SecurityServiceImpl implements SecurityService {
             if(!registrationDto.getPassword().equals(registrationDto.getConfirmationPassword())) {
                 throw new PasswordDontMatchException("Les mots de passe ne correspondent pas");
             }
+
+            validatePassword(registrationDto.getPassword());
 
             // Address treatment
             List<Address> addresses = registrationDto.getAddressList();
@@ -98,13 +102,29 @@ public class SecurityServiceImpl implements SecurityService {
 
         } catch (EmailAlreadyExistsException e) {
             throw e;
+        } catch (InvalidPasswordException e) {
+            throw e;
+        } catch (PasswordDontMatchException e) {
+            throw e;
         } catch (Exception e) {
             logger.error("Erreur lors de l'inscription : ", e);
             throw new RegistrationFailedException("Échec de l'inscription pour: " + registrationDto.getEmail(), e);
         }
     }
 
+    private void validatePassword(String password) throws InvalidPasswordException {
+        if (password == null || password.length() < 8) {
+            throw new InvalidPasswordException("Le mot de passe doit contenir au moins 8 caractères.");
+        }
 
+        if (!password.matches(".*[A-Z].*")) {
+            throw new InvalidPasswordException("Le mot de passe doit contenir au moins une majuscule.");
+        }
+
+        if (!password.matches(".*[0-9].*")) {
+            throw new InvalidPasswordException("Le mot de passe doit contenir au moins un chiffre.");
+        }
+    }
 
     private void saveVolunteer(RegistrationDto registrationDto, List<Address> addresses, Role role) {
         Volunteer volunteer = new Volunteer();
@@ -137,7 +157,7 @@ public class SecurityServiceImpl implements SecurityService {
     }
 
     @Override
-    public UserDto authenticate(AuthenticationDto authenticationDto) throws AuthenticationFailedException {
+    public UserDto authenticate(AuthenticationDto authenticationDto) throws AuthenticationFailedException, InvalidCredentialsException {
         logger.info("Début de l'authentification pour : " + authenticationDto.getEmail());
 
         try {
@@ -166,12 +186,9 @@ public class SecurityServiceImpl implements SecurityService {
 
         } catch (AuthenticationException e) {
             logger.error("Échec de l'authentification : Identifiants incorrects", e);
-            throw new AuthenticationFailedException("Identifiants incorrects");
+            throw new InvalidCredentialsException("Identifiants incorrects");
         }
     }
-
-    /// Private methods
-
 
 
     /// Setters

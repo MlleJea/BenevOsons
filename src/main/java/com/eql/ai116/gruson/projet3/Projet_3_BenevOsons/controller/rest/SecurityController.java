@@ -1,10 +1,10 @@
 /**
  * SecurityController.java
  * Contrôleur REST qui gère les opérations de sécurité de l'application.
- *
+ * <p>
  * Ce contrôleur expose des endpoints permettant de:
- *  Enregistrer un nouvel utilisateur
- *  Authentifier un utilisateur existant
+ * Enregistrer un nouvel utilisateur
+ * Authentifier un utilisateur existant
  *
  * @author Jeanne GRUSON
  * @version 1.0
@@ -17,6 +17,9 @@ import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.RegistrationD
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.entity.dto.UserDto;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.AuthenticationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.EmailAlreadyExistsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.InvalidCredentialsException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.InvalidPasswordException;
+import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.PasswordDontMatchException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.exception.RegistrationFailedException;
 import com.eql.ai116.gruson.projet3.Projet_3_BenevOsons.service.interf.SecurityService;
 import org.apache.logging.log4j.LogManager;
@@ -59,6 +62,12 @@ public class SecurityController {
         } catch (EmailAlreadyExistsException e) {
             logger.warn("Échec de l'inscription - Email déjà utilisé: " + registrationDto.getEmail());
             return ResponseEntity.status(HttpStatus.CONFLICT).body("Identifiant déjà utilisé");
+        } catch (InvalidPasswordException e) {
+            logger.warn("Échec de l'inscription - Mot de passe non conforme: " + registrationDto.getEmail());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (PasswordDontMatchException e) {  // AJOUTER
+            logger.warn("Échec de l'inscription - Mots de passe différents: " + registrationDto.getEmail());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         } catch (RegistrationFailedException e) {
             logger.error("Échec de l'inscription - Erreur interne: ", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue lors de l'inscription.");
@@ -78,14 +87,12 @@ public class SecurityController {
         try {
             UserDto userDto = securityService.authenticate(authenticationDto);
             return ResponseEntity.status(HttpStatus.OK).body(userDto);
+        } catch (InvalidCredentialsException e) {
+            logger.warn("Échec de l'authentification - Identifiants incorrects pour: " + authenticationDto.getEmail());
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants incorrects");
         } catch (AuthenticationFailedException e) {
-            if (e.getCause() instanceof BadCredentialsException) {
-                logger.warn("Échec de l'authentification - Identifiants incorrects pour: " + authenticationDto.getEmail());
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Identifiants incorrects");
-            } else {
-                logger.error("Échec de l'authentification - Erreur interne: ", e);
-                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue lors de l'authentification.");
-            }
+            logger.error("Échec de l'authentification - Erreur interne: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur est survenue lors de l'authentification.");
         }
     }
 
