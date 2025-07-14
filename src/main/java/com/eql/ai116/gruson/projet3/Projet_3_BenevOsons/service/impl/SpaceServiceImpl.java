@@ -150,7 +150,7 @@ public class SpaceServiceImpl implements SpaceService {
             Volunteer vol = volunteer.get();
             skill.getSkillsVolunteerList().add(vol);
         } else {
-            throw new ResourceNotFoundException("Volontaire non trouvé avec l'ID : " + skillDto.getVolunteerId());
+            throw new ResourceNotFoundException("Bénévole non trouvé avec l'ID : " + skillDto.getVolunteerId());
         }
         return skillRepository.save(skill);
     }
