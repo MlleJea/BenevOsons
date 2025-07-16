@@ -30,7 +30,7 @@ public class Skill {
     @Enumerated(EnumType.STRING)
     private Grade grade;
 
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(referencedColumnName = "id_skill_type")
     private SkillTypes skillType;
 
